@@ -1,0 +1,8 @@
+.env
+.venv
+__pyache__/
+*.pyc
+*.pyo
+*.pdf
+*npy    
+image_retrieval_dataset/

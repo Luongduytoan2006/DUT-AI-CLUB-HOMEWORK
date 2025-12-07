@@ -1,0 +1,6 @@
+Giải toàn bộ bài của ICPC National Việt Nam năm 2023 bằng C++. Chỉ được dùng code cơ bản, cho thư viện bits/stdc++h. Giải theo format sau:
+1. Phân tích đề bài (dịch đề)
+2. Ý tưởng giải
+3. Hướng dẫn code
+4. Format code: tạo hàm nếu cần, không bỏ hàm bên trong, tạo biến không viết hoa
+5. Đưa tổng hợp code

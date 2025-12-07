@@ -1,0 +1,109 @@
+Hàm tuỳ chỉnh trong pandas là gì?
+
+“Hàm tuỳ chỉnh” (custom function) là hàm Python do bạn định nghĩa rồi đưa cho pandas thực thi trên dữ liệu. pandas cung cấp nhiều “điểm móc” để áp dụng hàm ở các cấp khác nhau:
+
+Trên từng phần tử một cột (Series)
+
+Series.apply(func): áp dụng hàm cho mỗi giá trị trong Series.
+Ví dụ mình trích Title từ cột Name:
+
+Viết extract_title(name), sau đó df['Title'] = df['Name'].apply(extract_title).
+
+Dùng khi bạn cần xử lý chuỗi/số không có vectorized method sẵn.
+
+Trên từng hàng (row) của DataFrame
+
+DataFrame.apply(func, axis=1): truyền mỗi hàng (kiểu Series) vào hàm.
+Ví dụ tạo FamilySize = SibSp + Parch + 1:
+
+Viết compute_family_size(row) rồi df['FamilySize'] = df.apply(compute_family_size, axis=1).
+
+Dùng khi logic cần nhiều cột cùng lúc.
+
+Ánh xạ giá trị đơn giản
+
+Series.map(dict_or_func): đổi nhãn → mã số, ví dụ Sex -> {male:1, female:0}:
+
+df['SexCode'] = df['Sex'].map({'male':1, 'female':0}).
+
+Nhanh, gọn, phù hợp đổi nhãn & thay thế giá trị.
+
+Áp dụng theo phần tử của cả DataFrame
+
+DataFrame.applymap(func): áp dụng cho từng ô.
+
+Mình minh hoạ trên mini để thay NaN bằng 0.
+
+Ít dùng hơn; ưu tiên vector hoá (toàn cột) vì nhanh hơn.
+
+Theo nhóm (GroupBy)
+
+groupby().transform(func): trả về Series cùng kích thước bản gốc—dùng để tạo feature theo nhóm.
+
+Mình chuẩn hoá Fare trong từng Pclass bằng z-score: df['Fare_z_by_Pclass'] = df.groupby('Pclass')['Fare'].transform(zscore).
+
+groupby().agg({...}): tổng hợp gọn và nhanh, đặt tên kết quả rõ ràng.
+
+Ví dụ survival_rate = mean(Survived); cộng thêm avg_age = mean(Age).
+
+groupby().apply(func): linh hoạt nhất—hàm nhận DataFrame nhóm và trả về DataFrame tuỳ ý.
+
+Mình lấy Top 2 Fare mỗi Pclass bằng apply(top_2_by_fare).
+
+Dùng khi agg/transform không đáp ứng được.
+
+Cửa sổ trượt (Rolling)
+
+rolling().apply(func): áp dụng hàm trên cửa sổ liên tiếp.
+
+Ví dụ tính median Fare với cửa sổ 5 hàng theo PassengerId.
+
+Xâu chuỗi xử lý bằng pipe
+
+df.pipe(func) giúp đóng gói nhiều bước → pipeline rõ ràng, test dễ.
+
+Mình viết clean_and_engineer(df) rồi .pipe(clean_and_engineer).assign(IsChild=...).
+
+Khi nào nên/không nên dùng apply?
+
+Nên dùng apply/hàm tuỳ chỉnh khi:
+
+Cần logic phức tạp chưa có sẵn API vector hoá.
+
+Phải xử lý nhiều cột cùng lúc (row-wise).
+
+Cần thao tác theo nhóm với đầu ra linh hoạt (groupby().apply).
+
+Tránh lạm dụng apply khi:
+
+Có thể dùng phép toán vector hoá sẵn có (cộng trừ nhân chia theo cột, .str.*, .dt.*, np.where, pd.cut, fillna, v.v.). Những cách này nhanh hơn rất nhiều.
+
+Tổng hợp đơn giản (đếm, mean, median, std…) → dùng agg, transform.
+
+Tóm tắt lệnh pandas bạn vừa thấy
+
+Series.apply(func) → phần tử/cột.
+
+DataFrame.apply(func, axis=1) → từng hàng.
+
+Series.map({...} | func) → ánh xạ giá trị.
+
+DataFrame.applymap(func) → từng ô (ít dùng).
+
+groupby().agg({...}) → tổng hợp nhanh, đặt tên cột kết quả.
+
+groupby().transform(func) → tạo feature giữ nguyên số hàng.
+
+groupby().apply(func) → linh hoạt, trả về DataFrame tuỳ ý.
+
+rolling(window).apply(func) → hàm trên cửa sổ trượt.
+
+pipe(func) → xâu chuỗi pipeline sạch sẽ.
+
+Bạn muốn mình:
+
+giải thích sâu thêm về hiệu năng và cách vector hoá các ví dụ trên,
+
+hay viết một bài tập để bạn tự tay áp dụng (kèm lời giải),
+
+hoặc chuyển các bước thành pipeline hoàn chỉnh phục vụ mô hình hoá?
