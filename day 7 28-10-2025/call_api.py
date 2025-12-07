@@ -7,7 +7,7 @@ with open(input_path, "r", encoding="utf-8") as f:
     question = f.read().strip()
 
 client = OpenAI(
-    api_key="AIzaSyCn8O3RcRsyyFpm6tWqSsPJBF3XIYN28_0",
+    api_key=os.getenv("GOOGLE_API_KEY"),
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 )
 
