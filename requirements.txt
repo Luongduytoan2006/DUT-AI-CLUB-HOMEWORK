@@ -3,3 +3,4 @@ matplotlib
 openai
 opencv-python
 pandas
+pandasql
