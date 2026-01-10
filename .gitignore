@@ -6,3 +6,4 @@ __pyache__/
 *.pdf
 *npy    
 image_retrieval_dataset/
+PredictHousing/
