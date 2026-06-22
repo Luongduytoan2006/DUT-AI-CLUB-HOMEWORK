@@ -1,0 +1,4 @@
+Sử dụng dataset https://github.com/congnghia0609/ntc-scv/tree/master/data, thực hiện: 
+Bài 1 – CBOW: tiền xử lý, tạo vocabulary, sinh dữ liệu (context → target, window=2), huấn luyện mô hình Embedding → mean → Linear → Softmax, xuất embedding; 
+Bài 2 – Skip-gram: tiền xử lý, sinh dữ liệu (center → context), huấn luyện mô hình Embedding → Linear → Softmax, so sánh embedding với CBOW; 
+Bài 3 – Phân loại cảm xúc: tiền xử lý + gán nhãn, chuyển câu thành index có padding, xây dựng mô hình Embedding → Flatten → MLP → output, huấn luyện, đánh giá accuracy và dự đoán câu mới.

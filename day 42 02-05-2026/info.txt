@@ -1,0 +1,3 @@
+Code seq to seq
+https://www.kaggle.com/datasets/hungnm/englishvietnamese-translation?select=en_sents
+Code theo teacher forcing

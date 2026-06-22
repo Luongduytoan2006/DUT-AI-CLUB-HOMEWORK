@@ -12,4 +12,10 @@ day 24 17-1-2026/btvn/data/
 day 25 24-1-2026/data/
 day 25 24-1-2026/DetectNumber/data/
 day 25 24-1-2026/DetectLeaf/cassavaleafdata/
+test/
+
+# Datasets / archives / binary data — không úp lên GitHub
+*.zip
+*.mp4
+*.pkl
 

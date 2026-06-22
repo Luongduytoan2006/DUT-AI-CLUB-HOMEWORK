@@ -1,83 +1,65 @@
-numpy
-matplotlib
-openai
-opencv-python
-pandas
-pandasql
-beautifulsoup4
-requests
-selenium
-undetected-chromedriver
-webdriver-manager
-setuptools
-scikit-learn
-scipy
-seaborn
-tqdm
-pydantic
-python-dotenv
-SQLAlchemy
-ipykernel
-ipython
-Pillow
-urllib3
-certifi
-charset-normalizer
-idna
-typing-extensions
-anyio
-httpcore
-httpx
-sniffio
-trio
-trio-websocket
-websockets
-wsproto
-PySocks
-pycparser
-cffi
-attrs
-sortedcontainers
-outcome
-h11
-greenlet
-psutil
-packaging
-python-dateutil
-pytz
-tzdata
-six
-colorama
-distro
-platformdirs
-wcwidth
-prompt-toolkit
-Pygments
-jedi
-parso
-stack-data
-executing
-pure-eval
-asttokens
-decorator
-matplotlib-inline
-comm
-traitlets
-jupyter-core
-jupyter-client
-pyzmq
-tornado
-nest-asyncio
-debugpy
-kiwisolver
-fonttools
-cycler
-contourpy
-joblib
-threadpoolctl
-typing-inspection
-jiter
-annotated-types
-pydantic-core
-soupsieve
-websocket-client
+# ============================================================
+# DUT AI Club - Homework
+# Python 3.12.3
+#
+# Cài đặt nhanh (các thư viện chính):
+#     pip install -r requirements.txt
+#
+# Tái lập CHÍNH XÁC môi trường (toàn bộ 125 gói, khóa version):
+#     pip install -r requirements-lock.txt
+#
+# Quét từ toàn bộ file .py và .ipynb trong dự án.
+# ============================================================
+
+# --- Khoa học dữ liệu / số học ---
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.16.3
+scikit-learn==1.7.2
+
+# --- Trực quan hóa ---
+matplotlib==3.10.7
+seaborn==0.13.2
+
+# --- Deep Learning: PyTorch ---
+torch==2.9.1
+torchvision==0.24.1
+
+# --- Deep Learning: TensorFlow / Keras ---
+tensorflow==2.21.0
+keras==3.13.2
+
+# --- Thị giác máy tính (Computer Vision) ---
+opencv-python==4.12.0.88
+pillow==12.0.0
+
+# --- SQL trên DataFrame ---
+pandasql==0.7.3
+
+# --- Web scraping / Automation ---
+beautifulsoup4==4.14.3
+selenium==4.39.0
+undetected-chromedriver==3.5.5
+webdriver-manager==4.0.2
+
+# --- HTTP / API ---
+requests==2.32.5
+openai==2.8.1
+
+# --- Notebook / Jupyter ---
+ipython==9.7.0
+ipykernel==7.1.0
+
+# --- Tiện ích ---
+tqdm==4.67.1
+python-dotenv==1.2.1
+
+# ============================================================
+# Các gói được IMPORT trong code nhưng CHƯA cài trong .venv
+# (nhiều khả năng chạy trên Google Colab). Không pin version
+# để pip tự chọn bản tương thích. Gỡ dấu # nếu cần dùng.
+# ============================================================
+# gensim          # day 38 - KeyedVectors / word2vec
+# optuna          # tối ưu siêu tham số (hyperparameter tuning)
+# underthesea     # day 37, 39 - tách từ tiếng Việt (word_tokenize)
+# graphviz        # vẽ cây quyết định (export_graphviz)
