@@ -1,1 +1,5 @@
 Code LSTM
+
+Bài 1: Sử dụng pytorch lập trình kiến trúc LSTM from scratch, có thể sử dụng bất cứ lớp gì đã học ngoại trừ lớp nn.LSTM
+Bài 2: Sử dụng pytorch để lập trình mô hình phân loại cảm xúc của comment 
+Link dataset: https://www.kaggle.com/datasets/abdelmalekeladjelet/sentiment-analysis-dataset

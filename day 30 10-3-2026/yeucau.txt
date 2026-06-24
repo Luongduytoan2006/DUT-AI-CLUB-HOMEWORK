@@ -1,0 +1,18 @@
+Mục tiêu: Áp dụng các bộ lọc tích chập (Convolution filters) và lọc nhiễu.
+
+Dữ liệu đầu vào: 1 file ảnh nhiễu/mờ đính kèm.
+
+Yêu cầu đề bài:
+- Thực hiện phục hồi ảnh sử dụng tất cả các kỹ thuật sau để so sánh kết quả:
+ + Sobel: Phát hiện biên cạnh.
+ + Laplacian: Phát hiện biên cạnh (đạo hàm bậc 2).
+ + Median Filter: Khử nhiễu muối tiêu.
+ + Wiener Filter: Khử nhiễu và phục hồi ảnh mờ (deblur).
+
+Yêu cầu kỹ thuật (Hard Requirements):
+- Có thể sử dụng scipy.signal hoặc cv2 cho các bộ lọc cơ bản.
+- Riêng với Wiener Filter: Cần nắm rõ cách ước lượng tỷ lệ nhiễu (noise-to-signal ratio) nếu code thủ công hoặc tinh chỉnh tham số phù hợp.
+
+Hình thức nộp: 
+- File .py: Viết class ImageRestoration chứa các static method hoặc method tương ứng với 4 kỹ thuật trên.
+- File .ipynb: Load class từ file .py, chạy thử nghiệm trên ảnh đầu vào và so sánh kết quả side-by-side.

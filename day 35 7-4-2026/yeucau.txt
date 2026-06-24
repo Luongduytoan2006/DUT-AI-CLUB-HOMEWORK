@@ -1,0 +1,6 @@
+Bài 1: Sử dụng dataset phân loại bình luận đã gửi trong nhóm chung tạo một mô hình phân loại áp dụng các kỹ thuật tiền xử lý, tokenization, encoding phải dùng n gram  và các mô hình machine learning đã học
+Bài 2: Tương tự bài 1 nhưng phần encoding kết hợp n gram và if-idf. So sánh 2 kết quả và giải thích
+
+
+https://www.kaggle.com/datasets/ozlerhakan/spam-or-not-spam-dataset
+https://streetcodevn.com/blog/dataset
