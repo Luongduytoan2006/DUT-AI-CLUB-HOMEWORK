@@ -1,0 +1,4 @@
+Đề bài:
+Bài 1: Tạo một mô hình dịch máy áp dụng kiến trúc seq2seq kết hợp 1 trong 2 cơ chế Bahdanau Attention hoặc Luong Attention dịch tiếng Việt thành tiếng Anh, hãy vẽ attention để quan sát mức độ chú ý giữa các thành phần input và ouput, link dataset: https://www.kaggle.com/datasets/hungnm/englishvietnamese-translation?select=en_sents 
+
+Bài 2: Tạo một mô hình nhận đầu vào là các câu biểu diễn ngày tháng năm của con người đọc, và nhãn là ngày tháng năm tương ứng do máy tính hiểu. (VD: 12, thg 9 2010 => 2010-09-12), Link dataset và bài giải tham khảo: https://github.com/pbcquoc/attention_tutorial/tree/master
