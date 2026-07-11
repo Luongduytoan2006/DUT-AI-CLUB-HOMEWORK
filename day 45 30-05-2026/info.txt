@@ -1,0 +1,5 @@
+Bài 1: Code lại kiến trúc Transformer Decoder nhiều lớp nhưng ko được sử dụng nn.TransformerDecoderLayer
+Bài 2: Sử dụng kiến trúc Transformer để viết một mô hình cho bài toán dịch ngôn ngữ từ tiếng Anh sanh tiếng Việt
+Link dataset: https://www.kaggle.com/datasets/hungnm/englishvietnamese-translation?select=en_sents
+
+Chú ý ở phần Decoding Strategies sử dụng 3 thuật toán Greedy Search, Beam Search và Sampling để so sánh

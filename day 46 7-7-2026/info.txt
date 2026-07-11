@@ -1,0 +1,6 @@
+từ bộ dữ liệu sau
+https://www.kaggle.com/datasets/viswaprakash1990/garbage-detection/data?select=GARBAGE+CLASSIFICATION
+
+Bài 1: Hãy code mô hình RCNN. Sử dụng selective search từ thư viện. Dùng resnet18 là feature extraction và linear để phân loại các region proposals
+Bài 2: Hãy code mô hình Fast RCNN, hãy tự code lớp RoI Pooling,  cls_head, bbox_head theo đúng lý thuyết   
+So sánh quá trình infrence và quá trình training và tự rút ra nhận xét 

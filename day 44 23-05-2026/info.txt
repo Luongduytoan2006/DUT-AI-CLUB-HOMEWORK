@@ -1,0 +1,2 @@
+Áp dụng kiến trúc encoder của mô hình transformer cho bài toán phân loại cảm xúc của comment 
+Link dataset: https://www.kaggle.com/datasets/abdelmalekeladjelet/sentiment-analysis-dataset
