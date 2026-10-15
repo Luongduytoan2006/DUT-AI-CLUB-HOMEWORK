@@ -1,0 +1,79 @@
+# NGUYÊN LÝ VÀ ỨNG DỤNG FULLY CONVOLUTIONAL NETWORK (FCN) TRONG PHÂN ĐOẠN HÌNH ẢNH
+
+---
+
+## 1. Bối cảnh & Mục tiêu
+
+### Bối cảnh
+
+Năm 2015, nghiên cứu *Long et al.* giới thiệu **Fully Convolutional Networks (FCN)** – một bước ngoặt mang tính cách mạng chuyển đổi các mô hình phân loại ảnh (Classification) thành các mô hình phân đoạn ảnh mức pixel (Semantic Segmentation). Bằng cách thay thế toàn bộ các lớp Fully Connected bằng các lớp $1 \times 1$ Convolution và áp dụng Transposed Convolution cùng kỹ thuật Skip-connections, FCN cho phép dự đoán nhãn phân đoạn cho ảnh có kích thước bất kỳ.
+
+### Mục tiêu bài tập
+
+Sau khi hoàn thành bài tập này, sinh viên/học viên có khả năng:
+
+1. **Hiểu rõ cơ chế "Convolutionalization":** Cách biến đổi các lớp Dense/Linear thành Conv $1 \times 1$.
+2. **Lập trình và làm chủ Skip-connections:** So sánh sự khác biệt về mặt kiến trúc và độ chính xác giữa **FCN-32s**, **FCN-16s**, và **FCN-8s**.
+3. **Thực hành Data Pipeline cho Segmentation:** Xử lý đồng thời cả ảnh đầu vào (Image) và ảnh nhãn (Segmentation Mask).
+4. **Đánh giá mô hình Segmentation:** Cài đặt và tính toán các chỉ số đánh giá chuẩn ngành như **Pixel Accuracy (PA)** và **Mean Intersection over Union (mIoU)**.
+
+---
+
+## 2. Nhiệm vụ thực hiện (Tasks)
+
+### Task 1: Tiền xử lý dữ liệu & Data Loader
+
+**Dataset:** Sử dụng tập dữ liệu **CamVid**
+
+**Nhiệm vụ:**
+* Xây dựng `Dataset` và `DataLoader` đọc cặp ảnh gốc và mask nhãn tương ứng.
+* Thực hiện Data Augmentation phù hợp cho bài toán Segmentation (ví dụ: Random Crop, Horizontal Flip) — *Lưu ý: Mọi phép biến đổi không gian phải áp dụng đồng thời trên cả ảnh gốc và mask*.
+* Chuẩn hóa (Normalize) ảnh đầu vào theo ImageNet mean/std.
+
+
+
+### Task 2: Xây dựng kiến trúc mô hình (Model Architecture)
+
+Lập trình bằng PyTorch hoặc TensorFlow/Keras để xây dựng 2 phiên bản mô hình:
+
+1. **FCN-32s:**
+* Sử dụng Backbone trích xuất đặc trưng (VGG-16 hoặc ResNet-50) bỏ các lớp FC gốc.
+* Thêm các lớp $1 \times 1$ Conv để biến đổi không gian kênh về số lượng class (`num_classes`).
+* Phóng to (Upsample) trực tiếp $32\times$ về lại kích thước ảnh ban đầu bằng `ConvTranspose2d`.
+
+
+2. **FCN-8s:**
+* Tích hợp đường truyền tắt (Skip-connections) từ các lớp `Pool4` ($1/16$) và `Pool3` ($1/8$).
+* Cộng gộp đặc trưng đa tỷ lệ (Multi-scale feature fusion) trước khi upsample $8\times$ cuối cùng.
+
+
+
+### Task 3: Huấn luyện & Tối ưu hóa (Training Loop)
+
+* **Loss Function:** Triển khai `CrossEntropyLoss` (chú ý thiết lập `ignore_index` cho các pixel viền/void nhãn nếu có).
+* **Optimizer:** Sử dụng Adam với chiến lược giảm Learning Rate (Learning Rate Scheduler) phù hợp.
+* Theo dõi và ghi lại biểu đồ Loss, Pixel Accuracy, và mIoU trên cả tập `train` và `val` qua từng epoch.
+
+### Task 4: Đánh giá & So sánh (Evaluation & Ablation Study)
+
+* **Đo lường chỉ số:** Cài đặt hàm tính các chỉ số trên tập `test`:
+* **Pixel Accuracy (PA):** Tỷ lệ pixel dự đoán đúng trên tổng số pixel.
+* **Mean IoU (mIoU):** Giá trị IoU trung bình tính trên tất cả các lớp đối tượng.
+
+
+* **So sánh định lượng:** Lập bảng so sánh kết quả giữa **FCN-32s** và **FCN-8s**.
+* **So sánh định tính:** Trực quan hóa 5–10 mẫu kết quả gồm: *Ảnh gốc | Ground Truth Mask | Dự đoán của FCN-32s | Dự đoán của FCN-8s*.
+* **Phân tích:** Nhận xét sự cải thiện biên giới đối tượng khi dùng Skip-connections trên FCN-8s so với FCN-32s.
+
+---
+
+## 3. Sản phẩm nộp bài (Deliverables)
+
+Mỗi sinh viên/nhóm sinh viên cần nộp một thư mục nộp bài bao gồm:
+
+1. **Mã nguồn (Source Code):**
+* Code Python (`.py` hoặc `.ipynb`) được tổ chức sạch sẽ, có comment giải thích rõ ràng.
+
+2. **Báo cáo kết quả (Markdown):**
+* Bảng kết quả so sánh định lượng (PA, mIoU) giữa FCN-32s và FCN-8s.
+* Các hình ảnh trực quan hóa định tính và phân tích trường hợp mô hình dự đoán sai (Failure Cases).

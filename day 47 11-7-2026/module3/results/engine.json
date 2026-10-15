@@ -1,0 +1,17 @@
+{
+  "format": "TensorRT engine",
+  "frames": 30,
+  "frames_with_people": 30,
+  "inference_fps": 8.226,
+  "inference_seconds": 3.647,
+  "model": "models/yolov8n.engine",
+  "os": "Linux-4.9.253-tegra-aarch64-with-Ubuntu-18.04-bionic",
+  "output_video": "results/engine_people.avi",
+  "person_detections": 114,
+  "pipeline_fps": 8.226,
+  "pipeline_seconds": 3.647,
+  "python": "3.6.9",
+  "runtime": "TensorRT + PyCUDA",
+  "status": "success",
+  "wall_seconds": 11.847
+}

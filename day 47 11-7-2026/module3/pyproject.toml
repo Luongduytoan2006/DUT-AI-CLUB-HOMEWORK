@@ -1,0 +1,11 @@
+[project]
+name = "module3-yolo-formats"
+version = "0.1.0"
+description = "So sanh YOLOv8 ONNX, PT va PTH tren Jetson Nano"
+requires-python = ">=3.6"
+dependencies = []
+
+[tool.uv]
+# Jetson JetPack 4.6 cung cap cv2/numpy qua system Python.
+# Venv duoc tao voi --system-site-packages de dung dung binary aarch64 san co.
+

@@ -1,10 +1,14 @@
 .env
 .venv
+.vs
+.vscode
 __pyache__/
 *.pyc
 *.pyo
 *.pdf
 *npy    
+*.pth
+*.pt
 image_retrieval_dataset/
 PredictHousing/
 DuyToanFolder copy/
@@ -13,6 +17,11 @@ day 25 24-1-2026/data/
 day 25 24-1-2026/DetectNumber/data/
 day 25 24-1-2026/DetectLeaf/cassavaleafdata/
 day 46 7-7-2026/data/GARBAGE CLASSIFICATION
+day 51 13-8-2026/yolov3/data/
+day 51 13-8-2026/yolov8/data/
+day 54 25-8-2026/dataset_speech_commands
+day 55 27-8-2026/speech_commands_data
+
 
 
 # Datasets / archives / binary data — không úp lên GitHub
@@ -21,3 +30,6 @@ day 46 7-7-2026/data/GARBAGE CLASSIFICATION
 *.mp4
 *.pkl
 
+.ask/
+tmp/
+*.wav

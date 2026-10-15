@@ -1,0 +1,26 @@
+Bài tập Thực hành: Phân loại Âm thanh - Speech Commands Dataset (MFCCs + SVM)
+Trong bài tập này, các bạn sẽ thực hành xây dựng và đánh giá quy trình Phân loại Lệnh Giọng nói (Speech Commands) sử dụng phương pháp Học máy truyền thống. Thay vì sử dụng các mạng Deep Learning phức tạp, chúng sẽ kết hợp đặc trưng MFCCs kinh điển với mô hình phân loại Support Vector Machine (SVM).
+
+Mục tiêu bài tập
+Bài tập mô phỏng lại một pipeline Machine Learning chuẩn mực cho dữ liệu chuỗi thời gian, giúp bạn nắm vững các kỹ năng sau:
+
+Xử lý Tín hiệu không đồng nhất: Học cách giải quyết vấn đề độ dài file âm thanh thay đổi (variable-length sequences) thông qua kỹ thuật Padding và Truncating.
+Trích xuất Đặc trưng Ngữ âm: Áp dụng biến đổi MFCCs để bóc tách thông tin cấu trúc khẩu hình (Formant) và nén giảm chiều dữ liệu.
+Vector hóa Dữ liệu: Chuyển đổi ma trận đặc trưng 2D thành vector 1D (sử dụng Mean Pooling) để tương thích với các thuật toán ML truyền thống.
+Huấn luyện & Đánh giá Mô hình: Vận dụng scikit-learn để huấn luyện SVM đa lớp và phân tích hiệu năng bằng các công cụ trực quan (Classification Report, Confusion Matrix).
+Yêu cầu thực hiện
+Nhiệm vụ của bạn là hoàn thiện pipeline phân loại thông qua các thành phần cốt lõi:
+
+Tải & Lọc Dữ liệu Âm thanh: Tải tự động bộ dữ liệu Speech Commands Dataset bằng torchaudio.datasets. Để tối ưu hóa thời gian huấn luyện, hãy viết hàm lọc ra một tập con gồm 10 từ khóa cơ bản (ví dụ: yes, no, up, down, left, right, on, off, stop, go).
+Tiền xử lý Độ dài Tín hiệu (Padding/Truncating): Do các file âm thanh có độ dài không đồng đều (nhỏ hơn hoặc bằng 1 giây), bạn phải sử dụng torch.nn.functional.pad hoặc cắt mảng để chuẩn hóa tất cả các mảng waveform về đúng kích thước cố định (1, 16000).
+Trích xuất Đặc trưng MFCCs: Khởi tạo biến đổi torchaudio.transforms.MFCC với tần số lấy mẫu (sample rate) phù hợp để trích xuất đặc trưng Cepstral từ tín hiệu đã chuẩn hóa.
+Chuyển đổi Không gian Chiều (Mean Pooling): Xử lý tensor MFCCs 2D đầu ra thành vector đặc trưng 1D bằng cách tính trung bình dọc theo trục thời gian (dim=-1), nhằm đáp ứng yêu cầu đầu vào của mô hình SVM.
+Huấn luyện Mô hình SVM: Sử dụng thư viện sklearn.svm.SVC (khuyên dùng kernel rbf) để huấn luyện mô hình phân loại đa lớp trên tập đặc trưng MFCCs 1D vừa trích xuất.
+Đánh giá & Trực quan hóa: Sử dụng sklearn.metrics để dự đoán trên tập test, tính toán Accuracy, hiển thị Classification Report, đồng thời vẽ ma trận nhầm lẫn (Confusion Matrix) để phân tích độ chính xác của mô hình trên từng từ khóa.
+💡 Câu hỏi thảo luận
+Tại sao với Speech Commands Dataset, bước kiểm tra và chuẩn hóa độ dài tín hiệu (Padding/Truncating) lại bắt buộc phải thực hiện trước khi trích xuất đặc trưng? Hiện tượng gì sẽ xảy ra đối với đầu vào của SVM nếu ta bỏ qua bước này?
+Thuật toán MFCCs được coi là rất phù hợp với các mô hình Machine Learning truyền thống (như SVM, GMM) so với Log-Mel Spectrogram. Hãy dựa vào kiến thức về phép biến đổi DCT (Discrete Cosine Transform) để giải thích tại sao?
+Hướng dẫn nộp bài
+Tải xuống file mẫu đính kèm và hoàn thiện code tại các vị trí được đánh dấu # TODO.
+Đảm bảo code chạy không có lỗi và in ra được Accuracy cuối cùng.
+Trả lời trực tiếp 2 câu hỏi thảo luận vào các khối Markdown ở cuối file Notebook.

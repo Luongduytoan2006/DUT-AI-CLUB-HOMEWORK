@@ -1,0 +1,13 @@
+Mục tiêu tổng quan: Bài tập giúp sinh viên làm quen với việc xây dựng và đánh giá quy trình Phân lập Giọng nói (Voice Activity Detection - VAD) dựa trên Mô hình Thống kê GMM (Gaussian Mixture Model) sử dụng scikit-learn và librosa.
+
+Mô tả chi tiết các phần:
+
+1. Import các thư viện cần thiết
+2. Tải Dữ liệu Âm thanh & Tạo Tín hiệu kèm Nhãn chuẩn (Ground Truth) (TODO 1)
+3. Phân khung & Trích xuất Đặc trưng Năng lượng Băng tần (TODO 2)
+4. Huấn luyện Mô hình GMM với sklearn.mixture & Phân loại VAD bằng LLR (TODO 3)
+5. Đánh giá Mô hình VAD bằng thư viện sklearn.metrics (TODO 4)
+6. Trực quan hóa Đánh giá Chi tiết (TODO 5)
+7. Câu hỏi thảo luận & Mở rộng
+
+Hướng dẫn làm bài: Bạn tải file đính kèm, code các phần TODO và chạy file đính kèm.

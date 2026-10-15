@@ -1,0 +1,88 @@
+1. Mục tiêu
+Dataset: object detection pascal voc 2012 https://www.robots.ox.ac.uk/~vgg/projects/pascal/VOC/voc2012/
+
+[GHI CHU] Da download VOC2012 (trainval, 11540 anh) ve may.
+Duong dan (da nam trong .gitignore, khong day len GitHub):
+  D:/DuyToan/Python/DUT_AI/.data/voc2012/VOCdevkit/VOC2012/
+    - JPEGImages/   17125 anh .jpg
+    - Annotations/  17125 file .xml (bndbox + 20 class)
+    - ImageSets/Main/  train(5717) / val(5823) / trainval(11540)
+
+Thiết kế, triển khai và đánh giá mô hình YOLOv1 (You Only Look Once Version 1) cho bài toán Object Detection, trong đó phần Backbone Feature Extractor được xây dựng theo hướng mô-đun để có thể thay thế bằng nhiều kiến trúc khác nhau như:
+
+-Custom CNN (YOLOv1 gốc)
+-VGG16
+-ResNet18
+-ResNet50
+-EfficientNet-B0
+-MobileNetV2
+
+Mục tiêu cuối cùng là phân tích ảnh hưởng của từng backbone đến:
+
+Độ chính xác phát hiện đối tượng
+Tốc độ suy luận (Inference Speed)
+Số lượng tham số
+Khả năng hội tụ trong quá trình huấn luyện
+
+6. Thí nghiệm
+Thí nghiệm 1
+
+So sánh:
+
+YOLOv1 Original CNN
+VS
+VGG16
+Thí nghiệm 2
+
+So sánh:
+
+VGG16
+VS
+ResNet18
+VS
+ResNet50
+Thí nghiệm 3
+
+So sánh:
+
+ResNet50
+VS
+EfficientNet-B0
+VS
+MobileNetV2
+
+7. Chỉ số đánh giá
+Accuracy
+mAP@0.5
+Precision
+Recall
+F1-score
+Computational Cost
+Number of Parameters
+FLOPs
+GPU Memory Usage
+Speed
+FPS
+Inference Time (ms/image)
+8. Kết quả cần trình bày
+Bảng so sánh
+Backbone	Params	mAP@0.5	FPS	Training Time
+Original CNN	
+VGG16	
+ResNet18	
+ResNet50	
+EfficientNet-B0	
+MobileNetV2	
+
+9. Nâng cao (Bonus)
+
+Triển khai thêm:
+
+Transfer Learning
+Mixed Precision Training (AMP)
+Cosine Annealing Scheduler
+Label Smoothing
+Mosaic Augmentation
+Knowledge Distillation
+và đánh giá ảnh hưởng của từng kỹ thuật đến hiệu năng YOLOv1.
+Deadline: 18/07/2026 17:30

@@ -1,0 +1,9 @@
+.venv/
+.venv-modern/
+.python/
+wheelhouse/
+*.tar
+*.tar.gz
+__pycache__/
+*.pyc
+

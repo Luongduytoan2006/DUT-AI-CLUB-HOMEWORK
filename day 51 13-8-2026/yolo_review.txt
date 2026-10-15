@@ -1,0 +1,566 @@
+REVIEW YOLO: TỪ YOLOv1 ĐẾN YOLOv8
+==================================
+
+1. YOLO là gì?
+--------------
+
+YOLO là viết tắt của "You Only Look Once", nghĩa là "chỉ nhìn một lần".
+
+Trong bài toán Object Detection, mô hình phải làm 2 việc cùng lúc:
+- Xác định vật thể nằm ở đâu trong ảnh: bounding box.
+- Xác định vật thể đó thuộc class nào: ví dụ Pothole, Crack, Manhole.
+
+Trước YOLO, nhiều mô hình detection làm theo kiểu nhiều bước. Ví dụ nhóm R-CNN thường tạo nhiều vùng nghi ngờ có vật thể trước, sau đó mới phân loại từng vùng. Cách đó chính xác nhưng chậm.
+
+YOLO đổi cách nhìn:
+- Đưa cả ảnh vào một mạng CNN.
+- Mạng dự đoán trực tiếp bbox + độ tin cậy + class.
+- Chỉ cần một lần forward qua mạng là có kết quả detection.
+
+Vì vậy YOLO là detector một giai đoạn (one-stage detector), ưu tiên tốc độ thời gian thực.
+
+Quy trình chung của YOLO:
+
+Ảnh đầu vào
+-> Backbone trích xuất đặc trưng
+-> Neck trộn đặc trưng nhiều scale
+-> Detection Head dự đoán box/class
+-> Decode box
+-> Lọc box yếu theo confidence
+-> NMS để bỏ các box trùng nhau
+-> Kết quả cuối cùng
+
+
+2. Các khái niệm cần nhớ
+------------------------
+
+Backbone:
+Là phần CNN chính để nhìn ảnh và rút ra feature map. Backbone giống như mắt của mô hình. Nó học cạnh, góc, texture, hình dạng nhỏ, rồi dần học pattern lớn hơn.
+
+Neck:
+Là phần nối giữa backbone và head. Neck thường trộn feature map nông và sâu. Feature nông giữ vị trí tốt, hữu ích cho vật nhỏ. Feature sâu hiểu ngữ nghĩa tốt hơn, hữu ích cho vật lớn.
+
+Detection Head:
+Là phần cuối dự đoán kết quả. Head tạo ra bbox, objectness/confidence và class.
+
+Anchor-based:
+Mô hình dùng các box mẫu gọi là anchor. Mỗi cell/grid point dự đoán độ lệch so với anchor. YOLOv2, YOLOv3, YOLOv4, YOLOv5 bản gốc đi theo hướng này.
+
+Anchor-free:
+Mô hình không cần anchor box mẫu. Nó dự đoán box dựa trên điểm/grid point hoặc khoảng cách từ điểm đến 4 cạnh bbox. YOLOv8 đi theo hướng này.
+
+Multi-scale prediction:
+Mô hình dự đoán ở nhiều kích thước feature map. Ví dụ YOLOv3 với input 416 có 3 scale: 52x52, 26x26, 13x13.
+- 52x52: nhiều ô nhỏ, hợp với vật nhỏ.
+- 26x26: hợp với vật vừa.
+- 13x13: mỗi ô nhìn vùng lớn, hợp với vật lớn.
+
+NMS:
+Non-Maximum Suppression. Sau khi model dự đoán nhiều box gần giống nhau, NMS giữ box có score cao nhất và bỏ các box trùng quá nhiều.
+
+
+3. YOLOv1: bản gốc
+------------------
+
+Ý tưởng chính:
+YOLOv1 biến object detection thành một bài toán regression trực tiếp từ ảnh sang bbox và class.
+
+Cách làm:
+- Chia ảnh thành lưới S x S, thường là 7 x 7.
+- Mỗi ô grid chịu trách nhiệm nếu tâm vật thể nằm trong ô đó.
+- Mỗi ô dự đoán B bounding boxes.
+- Mỗi box có: x, y, w, h, confidence.
+- Mỗi ô cũng dự đoán xác suất class.
+
+Kiến trúc:
+- YOLOv1 dùng CNN gồm nhiều convolution layer để trích xuất feature.
+- Cuối mạng có fully connected layer để tạo tensor dự đoán.
+- Với VOC, output thường là 7 x 7 x 30.
+
+Vì sao là 30?
+- 2 boxes mỗi cell.
+- Mỗi box có 5 số: x, y, w, h, confidence.
+- 20 class.
+- Tổng: 2 * 5 + 20 = 30.
+
+Ưu điểm:
+- Rất nhanh vì chỉ forward một lần.
+- Nhìn toàn cảnh ảnh nên ít nhầm background thành object hơn một số detector kiểu region proposal.
+
+Nhược điểm:
+- Mỗi ô grid chỉ dự đoán số lượng object hạn chế.
+- Khó phát hiện nhiều object nhỏ nằm gần nhau.
+- Localization chưa tốt bằng các mô hình hai giai đoạn.
+- Dùng fully connected cuối mạng nên kém linh hoạt với nhiều kích thước ảnh.
+
+
+4. YOLOv2 / YOLO9000: Better, Faster, Stronger
+----------------------------------------------
+
+YOLOv2 là bản cải tiến lớn sau YOLOv1.
+
+Thêm/tối ưu chính:
+
+1. Batch Normalization:
+Giúp train ổn định hơn, hội tụ tốt hơn, giảm overfitting.
+
+2. High Resolution Classifier:
+Trước khi train detection, classifier được fine-tune ở ảnh độ phân giải cao hơn. Mục tiêu là giúp backbone quen với ảnh lớn.
+
+3. Anchor Boxes:
+YOLOv2 bỏ cách dự đoán box hoàn toàn tự do như v1, chuyển sang dùng anchor. Model dự đoán offset so với anchor.
+
+4. K-Means Anchor:
+Anchor không chọn tay. YOLOv2 dùng K-Means trên kích thước bbox của dataset để tìm anchor hợp lý.
+
+5. Direct Location Prediction:
+Giới hạn tọa độ tâm bbox nằm quanh cell bằng sigmoid, giúp training ổn định hơn.
+
+6. Passthrough Layer:
+Đưa feature nông có độ phân giải cao xuống gần head để hỗ trợ vật nhỏ.
+
+7. Multi-scale Training:
+Trong lúc train, thay đổi kích thước input theo nhiều mức. Nhờ vậy cùng một model có thể chạy nhanh/chậm tùy kích thước ảnh.
+
+8. Darknet-19:
+YOLOv2 dùng backbone Darknet-19, nhẹ và nhanh hơn.
+
+YOLO9000 là gì?
+YOLO9000 là hướng mở rộng của YOLOv2. Nó train chung detection dataset và classification dataset để nhận diện được rất nhiều class, dùng cấu trúc phân cấp WordTree.
+
+
+5. YOLOv3: bản mạnh, phổ biến, anchor-based nhiều scale
+--------------------------------------------------------
+
+YOLOv3 không phải thay đổi triết lý toàn bộ, mà là nâng cấp nhiều phần để chính xác hơn.
+
+Kiến trúc chính:
+
+1. Backbone Darknet-53:
+- Gồm nhiều conv 3x3, 1x1.
+- Có residual connection giống ResNet.
+- Sâu hơn Darknet-19.
+- Trích xuất feature tốt hơn.
+
+2. Neck kiểu FPN:
+YOLOv3 dự đoán ở 3 scale:
+- 13x13: vật lớn.
+- 26x26: vật vừa.
+- 52x52: vật nhỏ.
+
+Ý tưởng FPN:
+- Feature sâu hiểu ngữ nghĩa tốt nhưng spatial nhỏ.
+- Feature nông giữ vị trí tốt nhưng ngữ nghĩa yếu.
+- Upsample feature sâu rồi concatenate với feature nông.
+- Nhờ vậy mô hình vừa biết "cái gì", vừa biết "ở đâu".
+
+3. Detection Head:
+Mỗi scale có 3 anchor.
+Với C class, mỗi scale output có số kênh:
+3 * (5 + C)
+
+Trong bài Road Damage có 3 class:
+3 * (5 + 3) = 24 kênh cho mỗi scale.
+
+Mỗi anchor dự đoán:
+- tx, ty: vị trí tâm box.
+- tw, th: kích thước box.
+- objectness: có vật thể hay không.
+- class logits: điểm cho từng class.
+
+4. Independent Logistic Classifiers:
+YOLOv1/v2 dùng hướng softmax class. YOLOv3 chuyển sang sigmoid + Binary Cross Entropy cho từng class.
+
+Lý do:
+- Một object có thể có nhiều nhãn trong một số dataset.
+- Sigmoid cho từng class độc lập hơn softmax.
+- Softmax ép tổng xác suất các class bằng 1, phù hợp single-label nhưng kém linh hoạt cho multi-label.
+
+YOLOv3 tối ưu gì?
+- Chính xác hơn YOLOv2.
+- Bắt vật nhỏ tốt hơn nhờ 3 scale.
+- Backbone mạnh hơn nhờ Darknet-53 + residual.
+- Class prediction linh hoạt hơn nhờ sigmoid/BCE.
+
+Trong code bài YOLOv3 của mình:
+- ConvBNLeaky: khối Conv + BatchNorm + LeakyReLU.
+- ResidualBlock: học phần dư, giúp mạng sâu dễ train.
+- Darknet53Backbone: tạo feature small/medium/large.
+- YOLOv3Neck: upsample + concat kiểu FPN.
+- YOLOv3DetectionHead: tạo output 3 scale.
+- YOLOv3Loss: gán target theo anchor tốt nhất, tính loss cho box/object/class.
+
+
+6. YOLOv4: gom nhiều kỹ thuật để tối ưu speed/accuracy
+-------------------------------------------------------
+
+YOLOv4 không do nhóm YOLO ban đầu của Joseph Redmon phát triển. Bản này tập trung vào việc kết hợp nhiều kỹ thuật tốt để đạt cân bằng tốc độ và độ chính xác.
+
+Kiến trúc thường được mô tả:
+- Backbone: CSPDarknet-53.
+- Neck: SPP + PAN.
+- Head: YOLO detection head.
+
+Các điểm thêm/tối ưu nổi bật:
+
+1. CSPDarknet-53:
+CSP là Cross Stage Partial. Nó chia feature thành 2 nhánh rồi ghép lại, giúp giảm tính toán lặp và giữ gradient tốt.
+
+2. SPP:
+Spatial Pyramid Pooling giúp head nhìn được ngữ cảnh ở nhiều receptive field khác nhau.
+
+3. PAN:
+Path Aggregation Network giúp truyền thông tin cả top-down và bottom-up, tốt hơn cho feature fusion.
+
+4. Mosaic Augmentation:
+Ghép 4 ảnh thành 1 ảnh training. Cách này tăng đa dạng bối cảnh và giúp model học vật nhỏ tốt hơn.
+
+5. Self-Adversarial Training:
+Tạo nhiễu/adversarial nhẹ trong training để model robust hơn.
+
+6. CIoU Loss:
+Loss bbox quan tâm đến IoU, khoảng cách tâm, tỉ lệ khung hình. Tốt hơn chỉ MSE tọa độ.
+
+7. Mish, DropBlock, CmBN:
+Các kỹ thuật phụ giúp activation, regularization và batch norm tốt hơn.
+
+YOLOv4 tối ưu gì?
+Nó là bản "tổng hợp đồ nghề" mạnh: cải thiện accuracy nhưng vẫn giữ real-time.
+
+
+7. YOLOv5: bản PyTorch phổ biến của Ultralytics
+-----------------------------------------------
+
+YOLOv5 không phải paper chính thức theo chuỗi YOLO gốc, nhưng rất phổ biến vì dễ dùng, dễ train, dễ export và có hệ sinh thái tốt.
+
+Kiến trúc cơ bản:
+- Backbone: CSPDarknet/CSP-style.
+- Neck: SPPF + PANet.
+- Head: YOLOv3-style anchor-based head ở các bản gốc.
+
+Điểm thêm/tối ưu:
+
+1. PyTorch-first:
+Code dễ đọc, dễ sửa, dễ train trên custom dataset.
+
+2. SPPF:
+Spatial Pyramid Pooling - Fast. Tương tự SPP nhưng tối ưu tốc độ.
+
+3. PANet:
+Trộn feature nhiều scale theo cả hướng trên xuống và dưới lên.
+
+4. AutoAnchor:
+Tự kiểm tra anchor có hợp dataset không, hỗ trợ custom dataset.
+
+5. Data augmentation mạnh:
+Mosaic, MixUp, HSV augmentation, random affine...
+
+6. Nhiều kích thước model:
+n, s, m, l, x. Model nhỏ nhanh hơn, model lớn chính xác hơn.
+
+YOLOv5 tối ưu gì?
+Tối ưu workflow thực hành: train nhanh, deploy dễ, export ONNX/TensorRT dễ, phù hợp làm project.
+
+
+8. YOLOv6: hướng công nghiệp và deployment
+------------------------------------------
+
+YOLOv6 do Meituan phát triển, mục tiêu lớn là ứng dụng công nghiệp: nhanh, chính xác, dễ triển khai trên phần cứng thực tế.
+
+Điểm thêm/tối ưu:
+
+1. EfficientRep Backbone:
+Dùng ý tưởng re-parameterization. Khi train có thể dùng cấu trúc nhiều nhánh để học tốt hơn, khi inference gộp về dạng conv đơn giản để chạy nhanh.
+
+2. Rep-PAN Neck:
+Neck cũng dùng các khối re-parameterized để trộn feature hiệu quả.
+
+3. Decoupled Head:
+Tách nhánh bbox regression và classification. Việc tách này giúp mỗi nhánh tập trung vào nhiệm vụ riêng.
+
+4. Training strategy:
+Quan tâm nhiều đến label assignment, loss, augmentation, quantization.
+
+5. Quantization/deployment:
+YOLOv6 chú trọng chạy nhanh khi đưa vào sản phẩm.
+
+YOLOv6 tối ưu gì?
+Không chỉ tối ưu accuracy trên paper, mà tối ưu để deploy thực tế: tốc độ cao, nhiều scale model, thân thiện với inference engine.
+
+
+9. YOLOv7: trainable bag-of-freebies
+------------------------------------
+
+YOLOv7 tiếp tục tập trung vào real-time detector có accuracy cao.
+
+Điểm thêm/tối ưu:
+
+1. E-ELAN:
+ELAN là Efficient Layer Aggregation Network. E-ELAN mở rộng ý tưởng này để tăng khả năng học mà vẫn kiểm soát tốc độ.
+
+2. Model scaling:
+YOLOv7 chú ý cách scale depth/width cho kiến trúc có nhiều concat để không phá cấu trúc mạng.
+
+3. Trainable bag-of-freebies:
+"Bag-of-freebies" là các kỹ thuật chỉ làm tăng chi phí lúc train, nhưng không làm inference chậm hơn. YOLOv7 đề xuất các kỹ thuật dạng có thể train được.
+
+4. Re-parameterized convolution:
+Tương tự ý tưởng train một kiểu, inference gộp lại cho nhanh hơn.
+
+5. Auxiliary head:
+Trong training có thể dùng thêm head phụ để hỗ trợ gradient. Khi inference có thể bỏ phần phụ.
+
+YOLOv7 tối ưu gì?
+Tăng accuracy mà vẫn giữ tốc độ real-time, đặc biệt bằng các kỹ thuật chỉ ảnh hưởng training.
+
+
+10. YOLOv8: anchor-free, decoupled head, hiện đại hơn cho bài này
+-----------------------------------------------------------------
+
+YOLOv8 là dòng Ultralytics đời mới hơn YOLOv5. Trong bài của mình, trọng tâm là tự cài đặt kiến trúc YOLOv8 bằng PyTorch.
+
+Kiến trúc chính:
+
+1. Conv-BN-SiLU:
+Khối conv cơ bản:
+- Conv2d để học feature.
+- BatchNorm để ổn định phân phối activation.
+- SiLU activation để phi tuyến mượt hơn ReLU/LeakyReLU.
+
+2. Bottleneck:
+Khối nhỏ có thể dùng shortcut. Giúp học feature sâu hơn mà không làm gradient khó đi.
+
+3. C2f:
+Thay cho C3/CSP cũ trong nhiều bản Ultralytics. C2f tách feature thành nhiều phần, cho một phần đi qua các bottleneck, rồi concat lại. Mục tiêu là giữ gradient flow tốt và giảm dư thừa.
+
+4. SPPF:
+Pooling nhiều lần để tăng receptive field nhưng vẫn nhanh.
+
+5. Backbone:
+Tạo feature P3, P4, P5 tương ứng stride 8, 16, 32.
+- P3: 80x80 nếu input 640, hợp vật nhỏ.
+- P4: 40x40, hợp vật vừa.
+- P5: 20x20, hợp vật lớn.
+
+6. Neck:
+Kết hợp FPN top-down và PAN bottom-up:
+- Top-down: đưa semantic mạnh từ feature sâu lên feature nông.
+- Bottom-up: đưa thông tin vị trí/chi tiết quay xuống feature sâu hơn.
+
+7. Detection Head anchor-free:
+YOLOv8 không dùng 9 anchor như YOLOv3.
+Head tách riêng:
+- Nhánh box regression.
+- Nhánh classification.
+
+Trong bài code của mình:
+- Box branch dự đoán phân phối khoảng cách tới 4 cạnh bbox.
+- Class branch dự đoán class logits.
+- Decode bằng anchor points + stride.
+- Loss gồm box loss, classification loss, DFL.
+
+8. DFL:
+Distribution Focal Loss. Thay vì dự đoán trực tiếp một số liên tục cho khoảng cách bbox, model dự đoán phân phối trên nhiều bin. Sau đó lấy kỳ vọng để ra khoảng cách. Cách này giúp bbox regression mượt và chính xác hơn.
+
+YOLOv8 tối ưu gì?
+- Không cần thiết kế anchor theo dataset.
+- Head tách box/class rõ hơn.
+- Training thường ổn định hơn.
+- Dễ mở rộng cho detection, segmentation, pose, classification.
+
+
+11. Vậy v2, v4, v5, v6, v7 "đâu"?
+----------------------------------
+
+Trong bài học này chỉ yêu cầu YOLOv3 và YOLOv8 vì hai bản này đại diện cho hai mốc quan trọng:
+
+- YOLOv3: anchor-based, multi-scale, Darknet-53, FPN.
+- YOLOv8: anchor-free, decoupled head, C2f, DFL.
+
+Các bản ở giữa không biến mất. Chúng là các bước tiến hóa:
+
+YOLOv2:
+Thêm anchor, BatchNorm, K-Means anchor, Darknet-19, multi-scale training.
+
+YOLOv4:
+Thêm CSPDarknet-53, SPP, PAN, Mosaic, SAT, CIoU, nhiều trick train để tăng accuracy.
+
+YOLOv5:
+Đưa YOLO sang hệ sinh thái PyTorch dễ dùng, CSP + SPPF + PAN, AutoAnchor, export/deploy tốt.
+
+YOLOv6:
+Tập trung công nghiệp, re-parameterized backbone/neck, decoupled head, quantization/deployment.
+
+YOLOv7:
+Tập trung train hiệu quả, E-ELAN, trainable bag-of-freebies, re-parameterization, auxiliary head.
+
+YOLOv8:
+Chuyển rõ sang anchor-free + decoupled head, C2f, DFL, pipeline hiện đại.
+
+
+12. So sánh nhanh
+-----------------
+
+YOLOv1:
+- Kiểu: grid-based, chưa dùng anchor.
+- Backbone/head: CNN + fully connected.
+- Tối ưu: biến detection thành một lần forward.
+- Yếu: vật nhỏ, nhiều vật gần nhau, localization.
+
+YOLOv2:
+- Kiểu: anchor-based.
+- Backbone: Darknet-19.
+- Tối ưu: BatchNorm, K-Means anchor, passthrough, multi-scale.
+- Mạnh hơn v1 ở localization và tốc độ/accuracy.
+
+YOLOv3:
+- Kiểu: anchor-based, 3 scale.
+- Backbone: Darknet-53 residual.
+- Neck: FPN.
+- Head: 3 anchors/scale, sigmoid class.
+- Mạnh ở phát hiện vật nhỏ hơn v2.
+
+YOLOv4:
+- Kiểu: anchor-based.
+- Backbone: CSPDarknet-53.
+- Neck: SPP + PAN.
+- Tối ưu: Mosaic, SAT, CIoU, CmBN, Mish, DropBlock.
+- Mạnh ở cân bằng speed/accuracy.
+
+YOLOv5:
+- Kiểu: anchor-based ở bản gốc Ultralytics.
+- Backbone/neck: CSP + SPPF + PAN.
+- Tối ưu: dễ train, dễ deploy, AutoAnchor, nhiều model size.
+- Mạnh ở thực hành project.
+
+YOLOv6:
+- Kiểu: single-stage, tối ưu công nghiệp.
+- Backbone/neck: EfficientRep + Rep-PAN.
+- Head: decoupled.
+- Tối ưu: re-parameterization, quantization, deployment speed.
+
+YOLOv7:
+- Kiểu: real-time detector.
+- Backbone/neck: E-ELAN và biến thể.
+- Tối ưu: trainable bag-of-freebies, auxiliary head, re-param conv.
+- Mạnh ở accuracy cao nhưng vẫn nhanh.
+
+YOLOv8:
+- Kiểu: anchor-free.
+- Backbone/neck: C2f + SPPF + FPN/PAN.
+- Head: decoupled box/class.
+- Tối ưu: không cần anchor, DFL, pipeline gọn và hiện đại.
+
+
+13. Nhìn YOLO theo quy trình làm bài
+------------------------------------
+
+Nếu tự code YOLO từ đầu, nên đi theo thứ tự:
+
+1. Chuẩn bị dataset:
+- Ảnh.
+- Label YOLO format: class_id, x_center, y_center, width, height.
+- Tọa độ thường normalize từ 0 đến 1.
+
+2. Dataset/DataLoader:
+- Đọc ảnh.
+- Resize về image size cố định.
+- Đọc label txt.
+- Trả về image tensor và target gồm labels/boxes.
+
+3. Backbone:
+- Viết các block CNN cơ bản.
+- Chạy thử input giả để xem output feature map đúng shape chưa.
+
+4. Neck:
+- Upsample/downsample/concat feature.
+- Kiểm tra shape các scale.
+
+5. Head:
+- YOLOv3: output dạng [B, 3 * (5 + C), S, S].
+- YOLOv8: output tách box branch và class branch.
+
+6. Target assignment:
+- YOLOv3: chọn anchor hợp nhất cho mỗi ground-truth box.
+- YOLOv8: chọn các điểm/grid point phù hợp với ground-truth.
+
+7. Loss:
+- YOLOv3: box loss + objectness loss + class BCE loss.
+- YOLOv8: box loss + class loss + DFL.
+
+8. Shape test:
+- Trước khi train phải test shape.
+- Nếu shape sai thì loss chắc chắn lỗi.
+
+9. Smoke test backward:
+- Dùng vài target giả.
+- Forward -> loss -> backward.
+- Kiểm tra loss hữu hạn và có gradient.
+
+10. Train:
+- Train nhiều epoch.
+- Theo dõi loss từng thành phần.
+
+11. Decode + NMS:
+- Biến output thô thành bbox thật trên ảnh.
+- Lọc confidence.
+- Chạy NMS.
+
+12. Evaluate:
+- Precision.
+- Recall.
+- mAP@0.5.
+- mAP@0.5:0.95.
+
+13. Visualize:
+- So sánh ảnh gốc, ground truth và prediction.
+- Nhìn trực quan để biết model sai kiểu gì.
+
+
+14. Kết luận ngắn
+-----------------
+
+YOLO là một họ mô hình object detection một giai đoạn, nổi bật vì tốc độ nhanh.
+
+YOLOv1 đặt nền móng: một mạng nhìn ảnh một lần và dự đoán detection trực tiếp.
+
+YOLOv2 làm YOLO thực dụng hơn bằng anchor, K-Means anchor và multi-scale training.
+
+YOLOv3 là mốc quan trọng vì dùng Darknet-53, residual connection và 3-scale prediction. Đây là kiến trúc tốt để học rõ backbone, neck, head và anchor-based detection.
+
+YOLOv4 đến YOLOv7 chủ yếu là các bước tối ưu mạnh về backbone, neck, augmentation, loss, training trick và deployment.
+
+YOLOv8 đại diện cho hướng hiện đại hơn: anchor-free, decoupled head, C2f, DFL. So với YOLOv3, YOLOv8 bỏ phần thiết kế anchor thủ công và tách rõ bài toán dự đoán box/class.
+
+Với bài Road Damage Detection:
+- YOLOv3 giúp hiểu cơ chế anchor-based và FPN 3 scale.
+- YOLOv8 giúp hiểu cơ chế anchor-free và head tách nhánh.
+- Cả hai đều dựa trên cùng ý tưởng lớn: dùng CNN để biến ảnh thành nhiều feature map, rồi dự đoán bbox/class ở nhiều scale.
+
+
+Nguồn tham khảo chính
+---------------------
+
+1. YOLOv1 - You Only Look Once: Unified, Real-Time Object Detection
+https://arxiv.org/abs/1506.02640
+
+2. YOLOv2 / YOLO9000 - Better, Faster, Stronger
+https://arxiv.org/abs/1612.08242
+
+3. YOLOv3 - An Incremental Improvement
+https://arxiv.org/abs/1804.02767
+
+4. YOLOv4 - Optimal Speed and Accuracy of Object Detection
+https://arxiv.org/abs/2004.10934
+
+5. Ultralytics YOLOv5 Architecture
+https://docs.ultralytics.com/yolov5/tutorials/architecture-description/
+
+6. YOLOv6 - A Single-Stage Object Detection Framework for Industrial Applications
+https://arxiv.org/abs/2209.02976
+
+7. YOLOv7 - Trainable Bag-of-Freebies Sets New State-of-the-Art for Real-Time Object Detectors
+https://arxiv.org/abs/2207.02696
+
+8. Ultralytics YOLOv8 Docs
+https://docs.ultralytics.com/models/yolov8/

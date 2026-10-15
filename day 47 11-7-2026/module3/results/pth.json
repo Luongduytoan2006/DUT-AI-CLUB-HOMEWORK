@@ -1,0 +1,17 @@
+{
+  "cuda_available": false,
+  "format": "PTH",
+  "frames": 30,
+  "frames_with_people": 30,
+  "model_bytes": 12937213,
+  "os": "Linux-4.9.253-tegra-aarch64-with-glibc2.27",
+  "output_video": "results/pth_people.avi",
+  "person_detections": 115,
+  "pipeline_fps": 1.481,
+  "pipeline_seconds": 20.257,
+  "python": "3.10.20",
+  "runtime": "PyTorch/Ultralytics CPU",
+  "status": "success",
+  "torch": "2.5.1",
+  "wall_seconds": 22.432
+}

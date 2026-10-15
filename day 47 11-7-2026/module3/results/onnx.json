@@ -1,0 +1,21 @@
+{
+  "format": "ONNX",
+  "frames": 30,
+  "frames_with_people": 30,
+  "onnxruntime": "1.16.3",
+  "opencv": "4.10.0",
+  "os": "Linux-4.9.253-tegra-aarch64-with-glibc2.27",
+  "output_shape": [
+    1,
+    84,
+    8400
+  ],
+  "output_video": "results/onnx_people.avi",
+  "person_detections": 114,
+  "pipeline_fps": 2.213,
+  "pipeline_seconds": 13.557,
+  "python": "3.10.20",
+  "runtime": "ONNX Runtime CPU",
+  "status": "success",
+  "wall_seconds": 15.289
+}

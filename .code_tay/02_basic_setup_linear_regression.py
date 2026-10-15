@@ -11,12 +11,29 @@ import numpy as np
 x = np.random.rand(5,2)
 print(x)
 
+print("=====================================")
+
+print("Ma trận 5x1 toàn số 1")
 bias = np.ones((5, 1))
 print(bias)
+
+print("=====================================")
 
 x_with_bias = np.concatenate((bias, x), axis=1)
 print(x_with_bias)
 
+print("=====================================")
 
 x = np.random.randint(0, 10, (5, 2))
 print(x)
+
+print("=====================================")
+
+print("Tính sum không dùng axis:")
+print(np.sum(x))
+
+print("=====================================")
+
+print("Tính sum có axis (0 theo cột, 1 theo ngang)")
+print(np.sum(x, axis=1))
+print(np.sum(x, axis=0))

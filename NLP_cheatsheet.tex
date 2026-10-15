@@ -1,0 +1,346 @@
+% !TEX program = xelatex
+\documentclass[8pt,landscape]{extarticle}
+\usepackage[a4paper,margin=0.65cm]{geometry}
+\usepackage{fontspec}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{fancyvrb}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{pifont}
+
+% Tu dong chon font: co Times/Consolas (Windows) thi dung, khong thi dung
+% ban thay the co san trong moi ban TeX (chay duoc ca tren Overleaf).
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{Consolas}
+  {\setmonofont{Consolas}[Scale=0.98]}
+  {\setmonofont{TeX Gyre Cursor}[Scale=1.0]}
+
+\definecolor{myblue}{RGB}{20,55,115}
+\definecolor{darkred}{RGB}{150,25,25}
+\definecolor{mygreen}{RGB}{20,105,50}
+\definecolor{mygray}{RGB}{80,80,80}
+
+\setlength{\parindent}{0pt}
+\setlength{\columnsep}{7pt}
+\setlength{\columnseprule}{0.3pt}
+\linespread{0.99}
+% Cho phep khoang trang co gian de dan deu chieu cao trang
+\setlength{\parskip}{0.5pt plus 0.5pt}
+
+% Header bar cho 1 chu de (khoang cach truoc co gian de lap day trang)
+\newcommand{\topic}[1]{\vspace{2.5pt plus 1.5pt}{\color{white}\colorbox{myblue}{\textbf{\,#1\,}}}\par\vspace{1.5pt}}
+% Tieu de phu
+\newcommand{\sub}[1]{\vspace{2pt plus 1pt}{\color{darkred}\textbf{#1}}\par}
+% Nhan (+) uu diem, (-) nhuoc diem
+\newcommand{\uu}{{\color{mygreen}\textbf{(+)}}\,}
+\newcommand{\nh}{{\color{darkred}\textbf{(--)}}\,}
+% Callout dap an trac nghiem
+\newcommand{\ans}[1]{{\color{mygreen}\textbf{\ding{52}}\,}\textit{#1}}
+
+% Khoi cong thuc / cac buoc (literal, monospace)
+\DefineVerbatimEnvironment{Fml}{Verbatim}{fontsize=\footnotesize,xleftmargin=1pt,samepage=true}
+
+\pagestyle{empty}
+
+\begin{document}
+\begin{multicols*}{3}
+
+{\centering\large\textbf{NLP CHEAT SHEET — MẶT 1: TOKENIZATION \& EMBEDDING}\par
+{\footnotesize\color{mygray}Quy ước: emb (vector 1 token) = 128 \quad|\quad h (bộ nhớ) = 64}\par}
+\vspace{2pt}
+
+\topic{0. TOKENIZATION — TỔNG QUAN}
+\textbf{Nội dung:} máy chỉ tính trên SỐ, không hiểu chữ, nên phải đổi văn bản thành số.\par
+\textbf{Pipeline:}
+\begin{Fml}
+Text -> Tach token -> Vocab -> ID
+     -> One-hot / Embedding
+\end{Fml}
+\textbf{Sinh ra để:} tạo đầu vào số cho mọi mô hình NLP.\par
+\textbf{Ý nghĩa:} bước đầu tiên, quyết định độ dài chuỗi và cỡ vocab (ảnh hưởng tốc độ + chất lượng).
+
+\topic{1. CÁC MỨC TÁCH TOKEN (thô -> mịn)}
+\sub{(a) Character (ký tự)}
+"hello" -> h,e,l,l,o.\par
+\uu Vocab cực nhỏ (vài trăm), KHÔNG bao giờ có từ lạ (OOV).\par
+\nh Chuỗi rất dài, mất nghĩa của "từ", học chậm.
+\sub{(b) Word (từ)}
+"tôi đi học" -> [tôi][đi][học].\par
+\uu Giữ nguyên nghĩa 1 từ, chuỗi ngắn.\par
+\nh Vocab khổng lồ (triệu từ); từ lạ -> UNK (mất tin); "chạy/running" coi là khác nhau.
+\sub{(c) Subword (từ con) — TỐT NHẤT, đang phổ biến}
+"playing" -> [play][\#\#ing]; "unhappy" -> [un][happy].\par
+\uu Vocab vừa (30k–50k); từ hiếm ghép từ mảnh -> ít UNK; giữ gốc từ (morphology).\par
+\nh Thuật toán tách phức tạp hơn (BPE, WordPiece, Unigram).\par
+\textbf{Cốt lõi:} subword đứng GIỮA char và word — cân bằng cỡ vocab và khả năng xử lý từ lạ.
+
+\topic{2. VOCAB + ONE-HOT}
+\textbf{Vocab:} từ điển \{token: id\}. Mỗi token -> 1 số nguyên ID.\par
+\textbf{One-hot:} vector dài = kích thước vocab, đúng 1 vị trí = 1.\par
+\begin{Fml}
+vocab 5 tu, "hoc"(id=4) -> [0,0,0,0,1]
+\end{Fml}
+\uu Đơn giản, không giả định quan hệ.\par
+\nh Cực dài + thưa (vocab 50k -> vector 50k chiều); MỌI từ cách đều nhau, không thể hiện "vua" gần "hoàng hậu".\par
+\textbf{Sinh ra Embedding} để thay one-hot (xem phần 6).
+
+\topic{3. TOKEN ĐẶC BIỆT (hay hỏi)}
+\begin{itemize}[leftmargin=1.1em,itemsep=0pt,topsep=1pt,parsep=0pt]
+\item \texttt{[UNK]} từ lạ ngoài vocab (word-level hay gặp).
+\item \texttt{[PAD]} chèn để các câu BẰNG độ dài -> gom batch thành ma trận.
+\item \texttt{[CLS]/[BOS]} bắt đầu câu (CLS dùng phân loại cả câu).
+\item \texttt{[SEP]/[EOS]} kết thúc / ngăn cách 2 câu.
+\item \texttt{[MASK]} che từ để model đoán (BERT học).
+\end{itemize}
+\textbf{Ý nghĩa:} PAD giúp song song hoá theo batch; UNK tránh vỡ khi gặp từ mới.
+
+\topic{4. THUẬT TOÁN TÁCH SUBWORD}
+\sub{(A) BPE — Byte Pair Encoding (GỘP DẦN)}
+\textbf{Cách:} bắt đầu từ ký tự; lặp: đếm CẶP ký hiệu liền nhau xuất hiện nhiều nhất -> gộp thành token mới; tới khi đủ cỡ vocab.\par
+\textbf{Tiêu chí gộp:} TẦN SUẤT ĐẾM THÔ (raw frequency).\par
+\uu Đơn giản, hiệu quả (GPT dùng).\quad\nh Tham lam theo tần suất, không tối ưu xác suất.
+\sub{(B) WordPiece (BERT)}
+Giống BPE nhưng gộp cặp làm TĂNG khả năng (Likelihood) nhất:\par
+\begin{Fml}
+score(A,B) = freq(AB) / (freq(A)*freq(B))
+\end{Fml}
+Đánh dấu subword bằng tiền tố \texttt{\#\#}.\par
+\ans{Ảnh 1: BPE gộp theo TẦN SUẤT ĐẾM THÔ; WordPiece theo LÝ THUYẾT XÁC SUẤT tối đa hoá Likelihood.}
+\sub{(C) Unigram LM (CẮT DẦN — ngược BPE)}
+\textbf{Cách:} khởi tạo vocab RẤT LỚN -> tính loss tổng -> loại dần \% token làm loss TĂNG ÍT NHẤT -> tới cỡ mong muốn.\par
+\ans{Ảnh 2: khởi tạo vocab LỚN rồi bỏ dần token ảnh hưởng ít nhất. (Không phải "khởi tạo nhỏ rồi thêm" — đó là BPE.)}
+\sub{(D) SentencePiece}
+Khung của Google chạy BPE/Unigram trên text THÔ, coi dấu cách là ký tự \texttt{\_}.\par
+\uu Không cần tách từ trước; dùng cho mọi ngôn ngữ (Việt, Nhật...); decode lại y hệt gốc.
+
+\topic{5. N-GRAM}
+\textbf{Nội dung:} mô hình xác suất, 1 từ phụ thuộc (n--1) từ trước.\par
+\begin{Fml}
+P(w_i|w_i-1) = count(w_i-1,w_i)/count(w_i-1)
+uni: P(w) | bi: P(w|1truoc) | tri: P(w|2truoc)
+\end{Fml}
+\textbf{Sinh ra để:} đoán từ tiếp theo / chấm điểm câu (bàn phím gợi ý).\par
+\uu Đơn giản, nhanh.\quad\nh n lớn -> bùng nổ tổ hợp + thưa (count=0 phải smoothing); chỉ nhớ n--1 từ, không nắm ngữ cảnh xa.
+
+\topic{5b. BAG-OF-WORDS \& TF-IDF}
+\textbf{BoW:} biểu diễn 1 câu = vector ĐẾM số lần mỗi từ trong vocab xuất hiện (bỏ thứ tự).\par
+\nh Từ phổ biến (the, là) lấn át; không có thứ tự \& nghĩa.\par
+\textbf{TF-IDF:} cân lại trọng số = TF (tần suất từ trong câu) $\times$ IDF (hiếm trong toàn bộ văn bản -> quan trọng).\par
+\begin{Fml}
+TF-IDF = tf(t,d) * log(N / df(t))
+\end{Fml}
+\uu Làm nổi từ ĐẶC TRƯNG, giảm từ nhàm. Tốt cho tìm kiếm, phân loại văn bản cổ điển.\par
+\nh Vẫn thưa, không nắm nghĩa/thứ tự (nền trước khi có embedding).
+
+\topic{6. EMBEDDING (VECTOR NHÚNG)}
+\textbf{Nội dung:} đổi mỗi từ thành vector đặc ~128 chiều; từ nghĩa GẦN nhau -> vector GẦN nhau.\par
+\textbf{Sinh ra để:} thay one-hot (dài, thưa, vô nghĩa) bằng vector ngắn, dày, MANG NGHĨA, học từ dữ liệu.\par
+\textbf{Trọng số lưu:} ma trận Embedding E cỡ [vocab $\times$ 128] (mỗi hàng = 1 từ).\par
+\textbf{Tính chất:} "vua" -- "đàn ông" + "đàn bà" $\approx$ "hoàng hậu" (quan hệ nghĩa = phép cộng vector).
+
+\sub{6.1 Word2Vec (cửa sổ trượt cỡ k)}
+\textbf{CBOW:} DÙNG NGỮ CẢNH -> đoán TỪ TRUNG TÂM.\par
+Input = 2k one-hot ngữ cảnh; mỗi cái nhân W (tra vector) rồi LẤY TRUNG BÌNH/tổng -> 1 vector ẩn h -> softmax đoán từ giữa.\par
+\ans{Ảnh 3 (CBOW): TRUNG BÌNH CỘNG/tổng các vector ngữ cảnh (sau nhân W) ra h. (đáp án B)}\par
+\uu Nhanh, tốt cho từ phổ biến.\par
+\textbf{Skip-gram:} NGƯỢC — dùng TỪ TRUNG TÂM đoán các từ ngữ cảnh.\par
+\uu Tốt cho từ HIẾM, dữ liệu nhỏ.\quad\nh Chậm hơn CBOW.
+
+\sub{6.2 FastText (Facebook)}
+Coi 1 từ = TỔNG vector các n-gram KÝ TỰ con: "apple" -> <ap,app,ppl,ple,le>.\par
+\uu Xử lý được TỪ LẠ/OOV (ghép từ mảnh ký tự); tốt cho lỗi chính tả, ngôn ngữ nhiều tiền/hậu tố.\par
+\nh Nặng hơn, vocab n-gram lớn.\par
+\textbf{Khác biệt:} Word2Vec học vector NGUYÊN từ (từ lạ -> chịu); FastText học theo MẢNH ký tự (từ lạ vẫn suy ra được).
+
+\sub{6.3 GloVe (Stanford)}
+Học từ MA TRẬN ĐỒNG XUẤT HIỆN (co-occurrence) toàn corpus: 2 từ hay đứng cùng nhau -> vector gần.\par
+\textbf{Khác Word2Vec:} Word2Vec học CỤC BỘ (cửa sổ trượt, dự đoán); GloVe học TOÀN CỤC (thống kê cả kho).\par
+\uu Tận dụng thống kê toàn cục, ổn định.\quad\nh Cần dựng ma trận đồng xuất hiện lớn.
+
+\topic{TÓM TẮT EMBEDDING (so sánh)}
+\begin{itemize}[leftmargin=1.1em,itemsep=0pt,topsep=1pt,parsep=0pt]
+\item BoW/TF-IDF: đếm, thưa, không nghĩa.
+\item Word2Vec/GloVe: dày, có nghĩa; từ lạ -> chịu.
+\item FastText: theo n-gram ký tự -> xử lý từ lạ.
+\item Điểm chung: 1 từ = 1 vector CỐ ĐỊNH (static), chưa theo ngữ cảnh câu (khác BERT).
+\end{itemize}
+
+\end{multicols*}
+\newpage
+% ===PAGE2===
+\begin{multicols*}{3}
+
+{\centering\large\textbf{MẶT 2: RNN $\to$ TRANSFORMER}\par
+{\footnotesize\color{mygray}emb (input)=128 \quad|\quad h (hidden)=64 \quad|\quad W chia sẻ cho MỌI bước thời gian}\par}
+\vspace{2pt}
+
+\topic{7. RNN (mạng hồi quy)}
+\textbf{Nội dung:} đọc câu TỪNG BƯỚC (token1 -> cuối), mang theo trí nhớ h. h0=0 (64x1).\par
+\textbf{Sinh ra để:} xử lý DỮ LIỆU CHUỖI độ dài bất kỳ (câu, thời gian).\par
+\textbf{Các bước tại t} (nhận $x_t$ 128x1, $h_{t-1}$ 64x1):
+\begin{Fml}
+(1) Wih @ x_t   + bih   -> 64x1  (Wih:64x128)
+(2) Whh @ h_(t-1)+ bhh  -> 64x1  (Whh:64x64)
+(3) h_t = tanh( (1)+(2) )        -> 64x1
+=> ra h1,h2,...,h_last (tom tat ca cau)
+\end{Fml}
+\textbf{Trọng số lưu:} CHỈ 2 ma trận Wih, Whh (+bias), dùng lại mọi bước.\par
+\sub{Tham số PyTorch}
+\texttt{input\_size}=128 (emb); \texttt{hidden\_size}=64 (h); \texttt{seq\_length}=số token/câu (sau pad).\par
+\texttt{batch\_first=True} -> tensor [batch, seq, input] (batch đầu, trực quan); False -> [seq, batch, input].\par
+\uu Ít tham số (chia sẻ W), chuỗi dài tuỳ ý.\par
+\nh VANISHING GRADIENT: nhân tanh \& Whh nhiều lần -> gradient teo -> QUÊN xa. Tuần tự -> chậm.
+
+\topic{8. LSTM (Long Short-Term Memory)}
+\textbf{Sinh ra để:} CHỮA quên của RNN. Thêm C (cell state) = băng chuyền nhớ dài hạn + 3 CỔNG điều tiết.\par
+\textbf{Mẹo:} ghép $z=[x_t;h_{t-1}]$ = 192x1 đi qua các cổng. Mỗi cổng: $W\,@\,z+b$ -> 64x1.
+\begin{Fml}
+(1) f_t = sigmoid(Wf@z+bf)   # forget: quen C cu?
+(2) i_t = sigmoid(Wi@z+bi)   # input : nhan moi?
+    g_t = tanh   (Wg@z+bg)   # tin moi la gi (C~)
+(3) C_t = f_t*C_(t-1) + i_t*g_t   # cap nhat C
+(4) o_t = sigmoid(Wo@z+bo)   # output gate
+    h_t = o_t * tanh(C_t)    # nho ngan han xuat ra
+\end{Fml}
+\textbf{Trọng số lưu:} Wf,Wi,Wg,Wo (mỗi cái 64x192) + 4 bias.\par
+sigmoid(0..1)=van đóng/mở \%; tanh(--1..1)=nội dung.\par
+\uu Nhớ XA (C cộng dồn, ít teo gradient).\quad\nh Nặng (4 bộ W), vẫn tuần tự.
+
+\topic{9. GRU (Gated Recurrent Unit)}
+\textbf{Sinh ra để:} rút gọn LSTM cho NHẸ. Bỏ C riêng, chỉ còn h; 2 cổng. $z=[x_t;h_{t-1}]$=192x1.
+\begin{Fml}
+(1) r_t = sigmoid(Wr@z+br)   # reset: quen h cu?
+(2) z_t = sigmoid(Wz@z+bz)   # update: tron cu/moi
+(3) H~_t = tanh(Wh@[x_t; r_t*h_(t-1)] + bh)
+(4) h_t = (1-z_t)*H~_t + z_t*h_(t-1)
+\end{Fml}
+\textbf{Trọng số lưu:} Wr,Wz,Wh + 3 bias (ít hơn LSTM 1 bộ).\par
+\uu Nhẹ, nhanh, hiệu quả gần LSTM.\quad\nh Chuỗi rất dài đôi khi thua LSTM.\par
+\textbf{Khác LSTM/GRU:} LSTM có C + 3 cổng (4W); GRU gộp còn h + 2 cổng (3W).
+
+\topic{10. SEQ2SEQ (Encoder--Decoder)}
+\textbf{Sinh ra để:} DỊCH MÁY — câu vào/ra khác độ dài. 2 LSTM nối nhau.\par
+\textbf{Encoder:} đọc cả câu nguồn -> nén thành context = h\_last, C\_last.\par
+\textbf{Decoder:} lấy context làm h khởi tạo, sinh từng từ:
+\begin{Fml}
+[BOS]->emb x1'(128) -> LSTM -> h1_dec
+h1_dec -> Linear(Wvocab) -> softmax -> tu "I"
+tu "I" -> buoc sau ... lap toi khi [EOS]
+\end{Fml}
+\textbf{Trọng số lưu:} LSTM enc, LSTM dec, Wvocab (h->|vocab|).\par
+\nh NHỒI cả câu vào 1 context CỐ ĐỊNH -> nghẽn, câu dài mất tin đầu câu. => Attention.
+
+\topic{11. ATTENTION (cơ chế chú ý)}
+\textbf{Sinh ra để:} chữa nghẽn context cố định. Mỗi bước decoder NHÌN LẠI toàn bộ h encoder.
+\begin{Fml}
+(1) score_i = h_t^dec . h_i^enc   (do lien quan)
+(2) a_i = softmax(score)          (tong = 1)
+(3) c_t = SUM a_i * h_i^enc       (context MOI moi buoc)
+(4) [c_t ; h_t^dec] -> Linear -> Wvocab -> softmax -> tu
+\end{Fml}
+\textbf{Khác seq2seq:} context TÍNH LẠI mỗi bước (không cố định 1 lần đầu).\par
+\uu Dịch câu DÀI tốt, biết căn từ đích ứng từ nguồn nào (alignment).\par
+\nh Mỗi bước chấm điểm với mọi h enc -> tốn; vẫn còn phần tuần tự.
+
+\topic{12. SELF-ATTENTION / TRANSFORMER}
+\textbf{Sinh ra để:} bỏ HẲN hồi quy tuần tự -> SONG SONG hoá + nắm quan hệ mọi cặp từ, kể cả xa.\par
+\textbf{Nội dung:} từ mỗi $x$ tạo 3 vector qua 3 ma trận học được:
+\begin{Fml}
+Q = x @ Wq   (query : toi dang tim gi)
+K = x @ Wk   (key   : toi chua gi)
+V = x @ Wv   (value : noi dung dua ra)
+Q,K,V co chieu 64 (d_k). Voi ca cau -> ma tran.
+Attention(Q,K,V)=softmax(Q@K^T / sqrt(d_k)) @ V
+\end{Fml}
+\textbf{Giải thích:} $Q@K^T$=điểm giống nhau mọi cặp từ; chia $\sqrt{d_k}$ để ổn định gradient; softmax->trọng số; nhân V-> mỗi từ ra $y$ trộn thông tin cả câu.\par
+\textbf{Trọng số lưu:} Wq, Wk, Wv (+ Multi-Head: nhiều bộ QKV song song, rồi Wo ghép).\par
+\uu SONG SONG (nhanh), nắm quan hệ xa tốt nhất, nền của BERT/GPT.\par
+\nh Chi phí $O(n^2)$ theo độ dài câu; cần Positional Encoding (tự nó không biết thứ tự từ).\par
+\textbf{Khác RNN:} RNN ra $h$ tuần tự \& dễ quên xa; Self-Attention ra $y$ song song, mọi từ "nhìn" trực tiếp mọi từ.
+
+\topic{13. KIẾN TRÚC TRANSFORMER (1 block)}
+\textbf{Sinh ra để:} xếp chồng nhiều lớp self-attention thành model mạnh (bài "Attention is all you need").\par
+\textbf{1 Encoder block gồm:}
+\begin{Fml}
+x + PositionalEncoding (them thu tu tu)
+ -> Multi-Head Self-Attention
+ -> Add & Norm (residual + LayerNorm)
+ -> Feed-Forward (2 Linear + ReLU)
+ -> Add & Norm
+\end{Fml}
+\textbf{Multi-Head:} chạy h bộ (Q,K,V) SONG SONG (mỗi head nhìn 1 kiểu quan hệ) rồi ghép -> Wo. Ví dụ 8 head.\par
+\textbf{Positional Encoding:} cộng vector vị trí (sin/cos) vào embedding -> model biết THỨ TỰ (self-attention không có sẵn).\par
+\textbf{Add\&Norm:} residual (cộng đầu vào) chống mất gradient; LayerNorm ổn định.\par
+\textbf{FFN:} 2 lớp Linear áp cho từng vị trí, tăng sức biểu diễn.\par
+\textbf{Decoder} thêm: Masked self-attention (che từ tương lai) + Cross-attention (Q từ decoder, K,V từ encoder).
+
+\topic{14. BERT vs GPT (họ Transformer)}
+\textbf{BERT} = chồng ENCODER, đọc 2 CHIỀU (nhìn cả trái+phải). Học bằng MASK (đoán từ bị che).\par
+\uu Hiểu ngữ cảnh sâu -> tốt cho PHÂN LOẠI, hỏi đáp, NER.\par
+\nh Không sinh văn bản trơn.\par
+\textbf{GPT} = chồng DECODER, đọc 1 CHIỀU (trái->phải), Masked attention. Học đoán TỪ KẾ TIẾP.\par
+\uu Tốt cho SINH văn bản (chatbot).\quad\nh Chỉ nhìn quá khứ.\par
+\textbf{Cốt lõi:} BERT = 2 chiều/hiểu; GPT = 1 chiều/sinh.
+
+\topic{TỔNG HỢP TRỌNG SỐ LƯU}
+\begin{itemize}[leftmargin=1.1em,itemsep=0pt,topsep=1pt,parsep=0pt]
+\item Embedding: E [vocab$\times$128].
+\item RNN: Wih, Whh (2 ma trận).
+\item LSTM: Wf,Wi,Wg,Wo (4).
+\item GRU: Wr,Wz,Wh (3).
+\item Attention: (dot đơn giản: không thêm W); có bản học Wa.
+\item Self-Attn: Wq,Wk,Wv (+Wo cho multi-head).
+\end{itemize}
+\textbf{Quy luật:} càng nhiều cổng/head -> càng nhiều ma trận -> nhớ tốt hơn nhưng nặng hơn.
+
+\topic{DÒNG TIẾN HOÁ (nhớ nhanh)}
+\begin{Fml}
+one-hot -> embedding (them nghia)
+RNN -> LSTM/GRU  (chua quen xa)
+seq2seq -> +Attention (het nghen context)
+Attention -> Self-Attention (bo hoi quy)
+Self-Attn -> Transformer -> BERT/GPT
+\end{Fml}
+Mỗi bước SINH RA để chữa NHƯỢC ĐIỂM của bước trước.
+
+\topic{15. CÁC HÀM SCORE ATTENTION}
+Điểm liên quan giữa $h^{dec}$ và $h^{enc}_i$ tính theo 3 cách:
+\begin{Fml}
+Dot     : score = h_dec . h_enc         (Luong)
+General : score = h_dec^T @ Wa @ h_enc  (co hoc Wa)
+Additive: score = v^T tanh(Wa[h_dec;h_enc]) (Bahdanau)
+\end{Fml}
+\textbf{Luong} (nhân): nhanh, ít tham số. \textbf{Bahdanau} (cộng): thêm lớp tanh, mềm dẻo hơn nhưng nặng hơn.\par
+\textbf{Cốt lõi:} khác ở CÁCH tính điểm; ý tưởng chú ý giống.
+
+\topic{16. BiRNN / BiLSTM (2 chiều)}
+\textbf{Sinh ra để:} 1 từ hiểu đúng cần cả ngữ cảnh TRÁI \& PHẢI (RNN thường chỉ thấy quá khứ).\par
+\textbf{Cách:} chạy 2 RNN — xuôi ($h^{\rightarrow}$) + ngược ($h^{\leftarrow}$), GHÉP lại tại mỗi từ.\par
+\uu Nắm ngữ cảnh 2 phía -> tốt cho NER, phân loại.\quad\nh Cần CẢ câu trước khi chạy -> không dùng streaming.
+
+\topic{17. KỸ THUẬT HUẤN LUYỆN}
+\textbf{Teacher Forcing:} train decoder đưa từ ĐÚNG (đáp án) vào bước sau thay vì từ vừa đoán. \uu Hội tụ nhanh. \nh Exposure bias (test không có đáp án -> lệch).\par
+\textbf{Gradient Clipping:} chặn norm gradient -> chống EXPLODING gradient (RNN).\par
+\textbf{Dropout:} tắt ngẫu nhiên neuron khi train -> chống overfit.
+
+\topic{18. OUTPUT \& LOSS}
+\begin{Fml}
+h -> Linear(Wvocab) -> logits -> Softmax -> xac suat
+Loss = Cross-Entropy(du_doan, that)
+\end{Fml}
+\textbf{Sinh từ:} argmax (tham lam) / sampling / Beam Search (giữ k ứng viên tốt nhất).
+
+\topic{19. VÍ DỤ SỐ SELF-ATTENTION}
+Câu 3 từ, emb=128, $d_k$=64:
+\begin{Fml}
+X:3x128 ; Wq,Wk,Wv:128x64 ; Q,K,V=X@W:3x64
+Q@K^T:3x3 (diem cap tu) -> /sqrt(64) -> softmax
+(...)@V : 3x64  (moi tu 1 vector moi y)
+\end{Fml}
+Mỗi từ ra 1 vector mới = trộn tin CẢ 3 từ theo trọng số chú ý.
+
+\end{multicols*}
+\end{document}

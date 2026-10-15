@@ -1,0 +1,9 @@
+Mục tiêu tổng quan: Bài tập giúp sinh viên làm quen với việc đọc, phát, trực quan hóa và trích xuất các đặc trưng cơ bản của dữ liệu âm thanh. Đây là những bước tiền xử lý cốt lõi trước khi đưa dữ liệu vào các mô hình học sâu (Speech-to-Text, Phân loại âm thanh,...).
+
+Mô tả chi tiết các phần:
+
+Import thư viện
+Khởi tạo và tải dữ liệu âm thanh (TODO 1 & 2)
+Trực quan hóa Dạng sóng (Waveform) (TODO 3)
+Biến đổi Fourier nhanh (FFT - Fast Fourier Transform) (TODO 4)
+Hướng dẫn làm bài: Bạn tải file đính kèm, code các phần TODO và chạy file đính kèm.

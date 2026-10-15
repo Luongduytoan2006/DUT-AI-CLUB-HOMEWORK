@@ -1,0 +1,1 @@
+Dùng lại dataset object detection phân loại rác, code lại kiến trúc Faster RCNN và train mô hình, so sánh với các mô hình RCNN và Fast RCNN

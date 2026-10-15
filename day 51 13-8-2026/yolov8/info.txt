@@ -1,0 +1,23 @@
+Xây dựng kiến trúc YOLOv8 bằng PyTorch cho bài toán Object Detection. Trọng tâm là cách YOLOv8 trích xuất đặc trưng, kết hợp đặc trưng đa tỉ lệ và thực hiện dự đoán theo cơ chế anchor-free.
+Yêu cầu:
+Một là, Tự cài đặt các thành phần chính của YOLOv8 gồm:
+
+Conv-BN-SiLU, Bottleneck, C2f, SPPF.
+Backbone để trích xuất đặc trưng.
+Multi-scale Feature Fusion (Neck) để kết hợp feature ở nhiều mức.
+Detection Head theo cơ chế anchor-free, tách riêng nhánh Bounding Box Regression và Classification.
+Hai là, Hoàn thiện mô hình YOLOv8 sao cho tạo được ba feature map dự đoán P3, P4, P5 tương ứng với stride 8, 16, 32. Kiểm tra kích thước tensor bằng các shape test được cung cấp trong notebook.
+
+Ba là, Sử dụng Road Damage Dataset: Potholes, Cracks and Manholes theo định dạng YOLO, gồm ba lớp Pothole, Crack và Manhole. Phần tự động tải và chuẩn hóa dataset, Dataset, DataLoader, preprocessing và visualization được cung cấp sẵn trong template.
+
+Bốn là, Phần target assignment, YOLOv8 Loss, training loop, NMS và evaluation được cung cấp sẵn. Sau khi hoàn thành kiến trúc, ghép mô hình vào pipeline để kiểm tra forward, backward và huấn luyện mô hình.
+
+Năm là, Đánh giá mô hình bằng các chỉ số Precision, Recall, mAP@0.5 và mAP@0.5:0.95, đồng thời trực quan hóa một số kết quả dự đoán.
+
+QUAN TRỌNG: Được phép dùng các thư viện như Torchvision, Numpy, Matplotlib, Pandas, Pillow, tqdm, pyyaml,... Không gắt gao trong việc dùng thư viện hỗ trợ, các bạn được tự do miễn là đúng kiến trúc.
+
+Câu hỏi kết luận:
+
+Phân tích vai trò của Backbone, Multi-scale Feature Fusion và Detection Head trong YOLOv8.
+Giải thích vì sao việc dự đoán trên nhiều scale giúp mô hình phát hiện các đối tượng có kích thước khác nhau và nêu điểm khác biệt chính giữa cơ chế anchor-free của YOLOv8 và cơ chế anchor-based đã học trước đó.
+Quy trình: Hoàn thành các cell TODO về kiến trúc → chạy shape test → ghép với pipeline được cung cấp → train → evaluate → trực quan hóa kết quả → hoàn thiện nhận xét cuối bài.

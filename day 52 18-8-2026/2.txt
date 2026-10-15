@@ -1,0 +1,13 @@
+Mục tiêu tổng quan: Hướng dẫn xây dựng quy trình Deep Learning hoàn chỉnh để phân loại lệnh giọng nói trực tiếp từ dữ liệu sóng âm thanh thời gian (Raw Waveform) bằng mạng tích phân 1 chiều (1D CNN) trên bộ dữ liệu Speech Commands.
+
+Mô tả chi tiết các phần:
+
+Import thư viện & Cấu hình môi trường
+Tải và Nạp bộ dữ liệu Speech Commands (TODO 1)
+Tiền xử lý dữ liệu sóng & Tạo PyTorch DataLoader (TODO 2)
+Xây dựng Kiến trúc Mô hình 1D CNN (AudioCNN1D) (TODO 3)
+Cấu hình Loss Function & Optimizer (TODO 4)
+Huấn luyện Mô hình (Training Loop) (TODO 5): Viết vòng lặp huấn luyện qua 25 Epochs, tính toán và lưu lịch sử loss & accuracy trên cả 2 tập Train và Test.
+Đánh giá & Trực quan hóa kết quả (TODO 6)
+Câu hỏi thảo luận: Phân tích những hạn chế cốt lõi của việc huấn luyện 1D CNN trực tiếp trên tín hiệu dạng sóng thời gian thô (Raw Waveform) so với việc trích xuất các đặc trưng biểu diễn phổ thời gian - tần số (như STFT Spectrogram hay MFCC).
+Hướng dẫn làm bài: Bạn tải file đính kèm, code các phần TODO và chạy file đính kèm đó.

@@ -1,0 +1,18 @@
+Hãy tự tìm hoặc ghi âm một file .wav tiếng nói có:
+
+Một nguyên âm được kéo dài.
+Ít nhất một phụ âm bật như /p/, /t/ hoặc /k/.
+Một người nói, ít nhiễu và không có nhạc nền.
+Đặt file tại audio/speech.wav hoặc thay đổi biến AUDIO_PATH trong notebook.
+
+Từ file tiếng nói này, tạo hai Spectrogram:
+
+Wideband Spectrogram: cửa sổ 5 ms, tương ứng khoảng 80 sample ở 16 kHz.
+Narrowband Spectrogram: cửa sổ 50 ms, tương ứng khoảng 800 sample ở 16 kHz.
+Link Template: https://drive.google.com/file/d/1BS27l1JN1xfCu6rWDqnrwDG0XI4M3wGD/view?usp=sharing
+
+Yêu cầu:
+Chuyển độ dài cửa sổ từ millisecond sang số sample.
+Sử dụng STFT để sinh Power Spectrogram theo thang dB.
+Hiển thị hai Spectrogram với trục thời gian và tần số rõ ràng.
+So sánh sự khác biệt về độ phân giải thời gian và tần số.

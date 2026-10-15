@@ -1,0 +1,241 @@
+[19:05:30] === Bat dau train. Device=cuda ===
+[19:05:30] Train=7324 anh, Valid=2098 anh
+[19:05:43]   epoch 0 batch 0/457 loss=78.2676
+[19:05:49]   epoch 0 batch 50/457 loss=21.0971
+[19:05:55]   epoch 0 batch 100/457 loss=15.4604
+[19:06:02]   epoch 0 batch 150/457 loss=9.8458
+[19:06:08]   epoch 0 batch 200/457 loss=15.3272
+[19:06:14]   epoch 0 batch 250/457 loss=5.8607
+[19:06:20]   epoch 0 batch 300/457 loss=10.7773
+[19:06:27]   epoch 0 batch 350/457 loss=11.6003
+[19:06:33]   epoch 0 batch 400/457 loss=6.8537
+[19:06:39]   epoch 0 batch 450/457 loss=6.2027
+[19:07:08] EPOCH 0/29 | train=14.6220 val=8.1599 | 98s
+[19:07:09]   -> luu best.pt (val=8.1599)
+[19:07:21]   epoch 1 batch 0/457 loss=3.2984
+[19:07:27]   epoch 1 batch 50/457 loss=7.0259
+[19:07:34]   epoch 1 batch 100/457 loss=5.2386
+[19:07:40]   epoch 1 batch 150/457 loss=5.6306
+[19:07:46]   epoch 1 batch 200/457 loss=2.6738
+[19:07:53]   epoch 1 batch 250/457 loss=7.2773
+[19:07:59]   epoch 1 batch 300/457 loss=8.3236
+[19:08:05]   epoch 1 batch 350/457 loss=5.3297
+[19:08:11]   epoch 1 batch 400/457 loss=4.8669
+[19:08:18]   epoch 1 batch 450/457 loss=7.1958
+[19:08:37] EPOCH 1/29 | train=6.4006 val=6.7590 | 88s
+[19:08:37]   -> luu best.pt (val=6.7590)
+[19:08:48]   epoch 2 batch 0/457 loss=11.6087
+[19:08:55]   epoch 2 batch 50/457 loss=4.4912
+[19:09:01]   epoch 2 batch 100/457 loss=12.4469
+[19:09:07]   epoch 2 batch 150/457 loss=5.0371
+[19:09:13]   epoch 2 batch 200/457 loss=7.5609
+[19:09:20]   epoch 2 batch 250/457 loss=5.3477
+[19:09:26]   epoch 2 batch 300/457 loss=10.4678
+[19:09:32]   epoch 2 batch 350/457 loss=3.3123
+[19:09:39]   epoch 2 batch 400/457 loss=9.5127
+[19:09:45]   epoch 2 batch 450/457 loss=5.6125
+[19:10:04] EPOCH 2/29 | train=5.5677 val=6.1846 | 86s
+[19:10:04]   -> luu best.pt (val=6.1846)
+[19:10:16]   epoch 3 batch 0/457 loss=7.1469
+[19:10:22]   epoch 3 batch 50/457 loss=6.0918
+[19:10:28]   epoch 3 batch 100/457 loss=4.9785
+[19:10:35]   epoch 3 batch 150/457 loss=2.9187
+[19:10:41]   epoch 3 batch 200/457 loss=5.8300
+[19:10:47]   epoch 3 batch 250/457 loss=6.7295
+[19:10:54]   epoch 3 batch 300/457 loss=5.7012
+[19:11:00]   epoch 3 batch 350/457 loss=10.2680
+[19:11:06]   epoch 3 batch 400/457 loss=4.4858
+[19:11:12]   epoch 3 batch 450/457 loss=6.2182
+[19:11:32] EPOCH 3/29 | train=5.1289 val=5.8988 | 88s
+[19:11:33]   -> luu best.pt (val=5.8988)
+[19:11:44]   epoch 4 batch 0/457 loss=3.9646
+[19:11:51]   epoch 4 batch 50/457 loss=3.5408
+[19:11:57]   epoch 4 batch 100/457 loss=2.6358
+[19:12:03]   epoch 4 batch 150/457 loss=5.7826
+[19:12:09]   epoch 4 batch 200/457 loss=9.5286
+[19:12:16]   epoch 4 batch 250/457 loss=7.0345
+[19:12:22]   epoch 4 batch 300/457 loss=3.9009
+[19:12:28]   epoch 4 batch 350/457 loss=3.5541
+[19:12:35]   epoch 4 batch 400/457 loss=5.6070
+[19:12:41]   epoch 4 batch 450/457 loss=2.1717
+[19:13:00] EPOCH 4/29 | train=4.7579 val=5.8080 | 88s
+[19:13:01]   -> luu best.pt (val=5.8080)
+[19:13:13]   epoch 5 batch 0/457 loss=8.4285
+[19:13:19]   epoch 5 batch 50/457 loss=4.5316
+[19:13:25]   epoch 5 batch 100/457 loss=2.9709
+[19:13:31]   epoch 5 batch 150/457 loss=5.6471
+[19:13:38]   epoch 5 batch 200/457 loss=3.9074
+[19:13:44]   epoch 5 batch 250/457 loss=4.4733
+[19:13:50]   epoch 5 batch 300/457 loss=3.5019
+[19:13:57]   epoch 5 batch 350/457 loss=2.6248
+[19:14:03]   epoch 5 batch 400/457 loss=4.1733
+[19:14:09]   epoch 5 batch 450/457 loss=3.8710
+[19:14:27] EPOCH 5/29 | train=4.4210 val=5.5426 | 87s
+[19:14:28]   -> luu best.pt (val=5.5426)
+[19:14:38]   epoch 6 batch 0/457 loss=3.6930
+[19:14:44]   epoch 6 batch 50/457 loss=3.0068
+[19:14:51]   epoch 6 batch 100/457 loss=1.5512
+[19:14:57]   epoch 6 batch 150/457 loss=6.0732
+[19:15:03]   epoch 6 batch 200/457 loss=4.2685
+[19:15:10]   epoch 6 batch 250/457 loss=6.2939
+[19:15:16]   epoch 6 batch 300/457 loss=7.5059
+[19:15:22]   epoch 6 batch 350/457 loss=4.3033
+[19:15:28]   epoch 6 batch 400/457 loss=4.6065
+[19:15:35]   epoch 6 batch 450/457 loss=2.9525
+[19:15:54] EPOCH 6/29 | train=4.1027 val=5.4597 | 86s
+[19:15:54]   -> luu best.pt (val=5.4597)
+[19:16:13] === Bat dau train. Device=cuda ===
+[19:16:13] Train=7324 anh, Valid=2098 anh
+[19:16:13] Resume tu epoch 7 (best_val=5.5426)
+[19:16:26]   epoch 7 batch 0/457 loss=3.6390
+[19:16:32]   epoch 7 batch 50/457 loss=4.8411
+[19:16:38]   epoch 7 batch 100/457 loss=2.1615
+[19:16:45]   epoch 7 batch 150/457 loss=3.3782
+[19:16:51]   epoch 7 batch 200/457 loss=1.7418
+[19:16:58]   epoch 7 batch 250/457 loss=9.0009
+[19:17:04]   epoch 7 batch 300/457 loss=5.7902
+[19:17:10]   epoch 7 batch 350/457 loss=5.2665
+[19:17:17]   epoch 7 batch 400/457 loss=2.9029
+[19:17:23]   epoch 7 batch 450/457 loss=3.1280
+[19:17:42] EPOCH 7/9 | train=3.8075 val=5.4446 | 89s
+[19:17:43]   -> luu best.pt (val=5.4446)
+[19:17:54]   epoch 8 batch 0/457 loss=2.5285
+[19:18:01]   epoch 8 batch 50/457 loss=1.4574
+[19:18:07]   epoch 8 batch 100/457 loss=4.1080
+[19:18:13]   epoch 8 batch 150/457 loss=2.5377
+[19:18:20]   epoch 8 batch 200/457 loss=2.0177
+[19:18:26]   epoch 8 batch 250/457 loss=6.0443
+[19:18:33]   epoch 8 batch 300/457 loss=2.6058
+[19:18:39]   epoch 8 batch 350/457 loss=3.9589
+[19:18:46]   epoch 8 batch 400/457 loss=7.2896
+[19:18:52]   epoch 8 batch 450/457 loss=5.0951
+[19:19:11] EPOCH 8/9 | train=3.5266 val=5.3460 | 88s
+[19:19:11]   -> luu best.pt (val=5.3460)
+[19:19:23]   epoch 9 batch 0/457 loss=1.5942
+[19:19:29]   epoch 9 batch 50/457 loss=1.9876
+[19:19:36]   epoch 9 batch 100/457 loss=1.8594
+[19:19:42]   epoch 9 batch 150/457 loss=8.0198
+[19:19:48]   epoch 9 batch 200/457 loss=4.5394
+[19:19:55]   epoch 9 batch 250/457 loss=4.1530
+[19:20:02]   epoch 9 batch 300/457 loss=2.0724
+[19:20:08]   epoch 9 batch 350/457 loss=3.9852
+[19:20:15]   epoch 9 batch 400/457 loss=4.1244
+[19:20:21]   epoch 9 batch 450/457 loss=3.7505
+[19:20:41] EPOCH 9/9 | train=3.1843 val=5.3558 | 90s
+[19:20:41] === TRAIN XONG ===
+[19:20:41] === HOAN TAT (thoat wrapper) ===
+[19:52:36] === Bat dau train. Device=cuda ===
+[19:52:36] Train=7324 anh, Valid=2098 anh
+[19:52:36] Resume tu epoch 10 (best_val=5.3460)
+[19:52:49]   epoch 10 batch 0/457 loss=3.6826
+[19:52:55]   epoch 10 batch 50/457 loss=3.9670
+[19:53:01]   epoch 10 batch 100/457 loss=1.8566
+[19:53:08]   epoch 10 batch 150/457 loss=6.5702
+[19:53:14]   epoch 10 batch 200/457 loss=1.5706
+[19:53:21]   epoch 10 batch 250/457 loss=1.3156
+[19:53:27]   epoch 10 batch 300/457 loss=2.7771
+[19:53:33]   epoch 10 batch 350/457 loss=2.5982
+[19:53:40]   epoch 10 batch 400/457 loss=3.9634
+[19:53:46]   epoch 10 batch 450/457 loss=2.2307
+[19:54:05] EPOCH 10/19 | train=2.8573 val=5.5491 | 88s
+[19:54:16]   epoch 11 batch 0/457 loss=1.0431
+[19:54:23]   epoch 11 batch 50/457 loss=1.8772
+[19:54:29]   epoch 11 batch 100/457 loss=3.2863
+[19:54:35]   epoch 11 batch 150/457 loss=3.5520
+[19:54:42]   epoch 11 batch 200/457 loss=1.6146
+[19:54:48]   epoch 11 batch 250/457 loss=2.2368
+[19:54:55]   epoch 11 batch 300/457 loss=2.4480
+[19:55:01]   epoch 11 batch 350/457 loss=1.7107
+[19:55:08]   epoch 11 batch 400/457 loss=1.7407
+[19:55:14]   epoch 11 batch 450/457 loss=2.1795
+[19:55:33] EPOCH 11/19 | train=2.5587 val=5.5019 | 88s
+[19:55:44]   epoch 12 batch 0/457 loss=3.1981
+[19:55:51]   epoch 12 batch 50/457 loss=1.6003
+[19:55:57]   epoch 12 batch 100/457 loss=1.7165
+[19:56:04]   epoch 12 batch 150/457 loss=2.9342
+[19:56:10]   epoch 12 batch 200/457 loss=2.2124
+[19:56:16]   epoch 12 batch 250/457 loss=2.6878
+[19:56:23]   epoch 12 batch 300/457 loss=2.6076
+[19:56:29]   epoch 12 batch 350/457 loss=1.8339
+[19:56:36]   epoch 12 batch 400/457 loss=2.0117
+[19:56:43]   epoch 12 batch 450/457 loss=1.2925
+[19:57:04] EPOCH 12/19 | train=2.2801 val=5.6609 | 91s
+[19:57:15]   epoch 13 batch 0/457 loss=1.4015
+[19:57:22]   epoch 13 batch 50/457 loss=2.6573
+[19:57:28]   epoch 13 batch 100/457 loss=1.6949
+[19:57:35]   epoch 13 batch 150/457 loss=3.9215
+[19:57:41]   epoch 13 batch 200/457 loss=1.8751
+[19:57:48]   epoch 13 batch 250/457 loss=1.6035
+[19:57:54]   epoch 13 batch 300/457 loss=1.5775
+[19:58:01]   epoch 13 batch 350/457 loss=0.9667
+[19:58:08]   epoch 13 batch 400/457 loss=3.2845
+[19:58:14]   epoch 13 batch 450/457 loss=1.4267
+[19:58:34] EPOCH 13/19 | train=2.0886 val=5.5929 | 90s
+[19:58:46]   epoch 14 batch 0/457 loss=1.6675
+[19:58:53]   epoch 14 batch 50/457 loss=0.8697
+[19:58:59]   epoch 14 batch 100/457 loss=1.8935
+[19:59:06]   epoch 14 batch 150/457 loss=1.4912
+[19:59:12]   epoch 14 batch 200/457 loss=1.8753
+[19:59:19]   epoch 14 batch 250/457 loss=0.9272
+[19:59:25]   epoch 14 batch 300/457 loss=2.0443
+[19:59:32]   epoch 14 batch 350/457 loss=1.8750
+[19:59:38]   epoch 14 batch 400/457 loss=1.8075
+[19:59:45]   epoch 14 batch 450/457 loss=1.6094
+[20:00:04] EPOCH 14/19 | train=1.8552 val=5.7449 | 90s
+[20:00:16]   epoch 15 batch 0/457 loss=1.4472
+[20:00:22]   epoch 15 batch 50/457 loss=0.9368
+[20:00:29]   epoch 15 batch 100/457 loss=1.3660
+[20:00:35]   epoch 15 batch 150/457 loss=3.1194
+[20:00:42]   epoch 15 batch 200/457 loss=3.4568
+[20:00:49]   epoch 15 batch 250/457 loss=1.4404
+[20:00:55]   epoch 15 batch 300/457 loss=2.7473
+[20:01:02]   epoch 15 batch 350/457 loss=2.4528
+[20:01:08]   epoch 15 batch 400/457 loss=1.9735
+[20:01:14]   epoch 15 batch 450/457 loss=1.3677
+[20:01:33] EPOCH 15/19 | train=1.7133 val=5.5874 | 88s
+[20:01:44]   epoch 16 batch 0/457 loss=0.7869
+[20:01:50]   epoch 16 batch 50/457 loss=1.3108
+[20:01:57]   epoch 16 batch 100/457 loss=0.7957
+[20:02:03]   epoch 16 batch 150/457 loss=1.5669
+[20:02:10]   epoch 16 batch 200/457 loss=1.2877
+[20:02:16]   epoch 16 batch 250/457 loss=0.8156
+[20:02:23]   epoch 16 batch 300/457 loss=1.7318
+[20:02:30]   epoch 16 batch 350/457 loss=2.7519
+[20:02:36]   epoch 16 batch 400/457 loss=1.7857
+[20:02:43]   epoch 16 batch 450/457 loss=0.9588
+[20:03:01] EPOCH 16/19 | train=1.5915 val=5.5910 | 88s
+[20:03:13]   epoch 17 batch 0/457 loss=1.9570
+[20:03:20]   epoch 17 batch 50/457 loss=1.0613
+[20:03:26]   epoch 17 batch 100/457 loss=2.1961
+[20:03:33]   epoch 17 batch 150/457 loss=0.9602
+[20:03:39]   epoch 17 batch 200/457 loss=2.6669
+[20:03:46]   epoch 17 batch 250/457 loss=1.0887
+[20:03:52]   epoch 17 batch 300/457 loss=1.5454
+[20:03:59]   epoch 17 batch 350/457 loss=1.5584
+[20:04:05]   epoch 17 batch 400/457 loss=1.4581
+[20:04:12]   epoch 17 batch 450/457 loss=1.6836
+[20:04:31] EPOCH 17/19 | train=1.5174 val=5.8063 | 89s
+[20:04:42]   epoch 18 batch 0/457 loss=0.7113
+[20:04:49]   epoch 18 batch 50/457 loss=0.7665
+[20:04:55]   epoch 18 batch 100/457 loss=1.4583
+[20:05:02]   epoch 18 batch 150/457 loss=1.1017
+[20:05:08]   epoch 18 batch 200/457 loss=1.8052
+[20:05:15]   epoch 18 batch 250/457 loss=1.5257
+[20:05:21]   epoch 18 batch 300/457 loss=1.9395
+[20:05:28]   epoch 18 batch 350/457 loss=1.5985
+[20:05:34]   epoch 18 batch 400/457 loss=3.1710
+[20:05:41]   epoch 18 batch 450/457 loss=1.1197
+[20:06:00] EPOCH 18/19 | train=1.4459 val=5.5022 | 90s
+[20:06:12]   epoch 19 batch 0/457 loss=1.0355
+[20:06:18]   epoch 19 batch 50/457 loss=1.1148
+[20:06:25]   epoch 19 batch 100/457 loss=1.6547
+[20:06:31]   epoch 19 batch 150/457 loss=1.2709
+[20:06:38]   epoch 19 batch 200/457 loss=1.8668
+[20:06:44]   epoch 19 batch 250/457 loss=0.6185
+[20:06:51]   epoch 19 batch 300/457 loss=1.3658
+[20:06:58]   epoch 19 batch 350/457 loss=1.1873
+[20:07:04]   epoch 19 batch 400/457 loss=0.9813
+[20:07:11]   epoch 19 batch 450/457 loss=1.7447
+[20:07:29] EPOCH 19/19 | train=1.3463 val=5.5328 | 88s
+[20:07:29] === TRAIN XONG ===
+[20:07:29] === HOAN TAT (thoat wrapper) ===

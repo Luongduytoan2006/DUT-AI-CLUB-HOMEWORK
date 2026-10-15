@@ -1,0 +1,14 @@
+Trước tiên, sử dụng tín hiệu tổng hợp gồm 440 Hz ở giây đầu và 880 Hz ở giây sau để quan sát sự khác biệt giữa FFT và STFT. FFT cho biết tín hiệu chứa những tần số nào, còn STFT giúp xác định các tần số đó xuất hiện vào thời điểm nào.
+
+Tiếp theo, hãy tự ghi âm hoặc chọn một file .wav tiếng nói ngắn, đặt tại audio/speech.wav hoặc thay đổi biến AUDIO_PATH cho phù hợp. Audio nên có một người nói, thời lượng khoảng 2–10 giây, ít nhiễu và không có nhạc nền.
+
+Link template: https://drive.google.com/file/d/1gXynk3NKQuIYg9D4-rhCevzbTIhIN9-U/view?usp=sharing
+
+Yêu cầu:
+Tự cài đặt quá trình chia tín hiệu thành các frame chồng lấp.
+Áp dụng cửa sổ Hann và tự xây dựng STFT bằng np.fft.rfft().
+Từ kết quả STFT, tính Magnitude, Power và dB Spectrogram.
+Thử các cửa sổ 10 ms, 25 ms và 50 ms để quan sát sự đánh đổi giữa độ phân giải thời gian và tần số.
+Dùng Librosa để sinh Mel-Spectrogram, Log-Mel Spectrogram và 13 hệ số MFCC.
+Trực quan hóa và so sánh: Waveform → Spectrogram → Log-Mel Spectrogram → MFCC
+Cuối cùng, đối chiếu STFT tự cài đặt với kết quả từ librosa.stft().

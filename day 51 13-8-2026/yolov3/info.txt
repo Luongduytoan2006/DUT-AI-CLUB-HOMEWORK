@@ -1,0 +1,19 @@
+Hãy tự xây dựng mô hình YOLOv3 hoàn chỉnh cho bài toán Object Detection bằng PyTorch không sử dụng model dựng sẵn:
+
+Phân cụm Anchor Boxes: Sử dụng Road Damage Dataset: Potholes, Cracks and Manholes theo định dạng YOLO, gồm ba lớp Pothole, Crack và Manholem, cài đặt thuật toán K-Means Clustering để tìm 9 kích thước Anchor Box tối ưu từ bounding boxes của tập dữ liệu.
+
+Kiến trúc YOLOv3: Tách biệt và tự triển khai 3 thành phần cốt lõi:
+
+Backbone (Darknet-53) + Trích xuất feature map đa tỉ lệ (52 x 52, 26 x 26, 13 x 13)
+Neck (Multi-scale Feature Generation / FPN): Cơ chế Upsampling và Concatenate feature giữa các tầng nông và sâu.
+Detection Head: Xuất ra tensor dự đoán với kích thước (Batch, 3 * (5 + Num_Classes), S, S).
+Loss Function (Independent Logistic Classifiers): Cài đặt hàm Loss hoàn chỉnh của YOLOv3, áp dụng phân loại đa nhãn độc lập (Binary Cross-Entropy cho từng class thay vì Softmax) và kiểm tra tính đúng đắn của toàn bộ mạng thông qua shape test.
+Câu hỏi kết luận:
+
+Kiến trúc FPN (Feature Pyramid Network) trong phần Neck có tác dụng gì đối với việc phát hiện các vật thể có kích thước nhỏ?
+Vì sao YOLOv3 lại chuyển từ Softmax (trong YOLOv2) sang Independent Logistic Classifiers (Sigmoid + BCE) ở bước dự đoán Class?
+Quy trình: Hoàn thành các cell TODO về kiến trúc → chạy shape test → kiểm tra kết quả → hoàn thiện nhận xét cuối bài.
+
+Bài tập nâng cao, người thông minh như bạn sẽ làm: Train mô hình yolov3 trên cùng dataset này và so sánh với mô hình yolov8 (Yêu cầu này option)
+
+Lưu ý: Có thể tải sẵn template được đính kèm và hoàn thành các cell TODO, hoặc nếu không có thể tự code ra mô hình hoàn chỉnh.
