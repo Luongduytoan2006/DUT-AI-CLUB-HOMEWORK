@@ -1,0 +1,415 @@
+1. Bộ Dữ Liệu Thực Hành: SC09 (Speech Commands - 10 Digits)
+sử dụng bộ dữ liệu SC09 (Speech Commands Digits):
+
+Mô tả: Trích xuất từ Google Speech Commands Dataset, gồm các file ghi âm phát âm 10 chữ số tiếng Anh từ "zero" đến "nine" từ hàng nghìn người nói khác nhau.
+Định dạng chuẩn hóa:
+Mỗi mẫu là một file âm thanh dài đúng 1.0 giây.
+Tần số lấy mẫu (Sample Rate) gốc: 16,000 Hz.
+Yêu cầu tiền xử lý: Downsample về 8,000 Hz (mỗi file tương ứng đúng 
+8,000
+8,000 mẫu biên độ). Việc này giúp giảm một nửa chiều dài chuỗi tính toán mà vẫn giữ trọn dải tần số đặc trưng của giọng nói con người (0–4 kHz).
+Kích thước dữ liệu: Khoảng vài trăm MB, tải trực tiếp hoặc lọc nhanh bằng thư viện torchaudio.datasets.SPEECHCOMMANDS.
+2. Chi Tiết Kiến Trúc Mạng
+Input x (B, 1, T)
+      │
+      ▼
+[1x1 Conv: 1 -> 64 residual_channels] (Causal)
+      │
+      ├───► [Residual Block 1 (dilation=1)]  ───► Skip 1 ──┐
+      │                  │                                 │
+      ├───► [Residual Block 2 (dilation=2)]  ───► Skip 2 ──┼─► Σ (Sum Skip Connections)
+      │                  │                                 │   │
+      ├───► [Residual Block 3 (dilation=4)]  ───► Skip 3 ──┘   ▼
+      │                  │                                   [ReLU]
+     ...                ...                                    │
+      │                  │                                   [1x1 Conv: 64 -> 128]
+      └───► [Residual Block N (dilation=256)]──► Skip N        │
+                                                               [ReLU]
+                                                               │
+                                                             [1x1 Conv: 128 -> 256 classes]
+                                                               │
+                                                               ▼
+                                                          Logits (B, 256, T)
+A. Phép biến đổi 
+μ
+μ-law Companding (Lượng hóa rời rạc)
+Biên độ âm thanh 
+x
+∈
+[
+−
+1
+,
+1
+]
+x∈[−1,1] được lượng hóa thành 
+256
+256 mức rời rạc 
+{
+0
+,
+1
+,
+…
+,
+255
+}
+{0,1,…,255} bằng công thức nén chuẩn 
+μ
+μ-law (
+μ
+=
+255
+μ=255):
+
+f
+(
+x
+)
+=
+sign
+(
+x
+)
+ln
+⁡
+(
+1
++
+μ
+∣
+x
+∣
+)
+ln
+⁡
+(
+1
++
+μ
+)
+f(x)=sign(x) 
+ln(1+μ)
+ln(1+μ∣x∣)
+​
+ 
+Khi đưa vào mạng: Vector nhãn lớp 
+y
+∈
+{
+0
+,
+…
+,
+255
+}
+T
+y∈{0,…,255} 
+T
+ .
+Đầu vào mạng có thể là One-hot embedding kích thước (B, 256, T) hoặc đưa về dạng liên tục 
+[
+−
+1
+,
+1
+]
+[−1,1] sau khi ánh xạ ngược.
+Khi tái tạo âm thanh (De-quantization):
+f
+−
+1
+(
+y
+)
+=
+sign
+(
+y
+)
+1
+μ
+(
+(
+1
++
+μ
+)
+∣
+y
+∣
+−
+1
+)
+,
+với 
+y
+∈
+[
+−
+1
+,
+1
+]
+f 
+−1
+ (y)=sign(y) 
+μ
+1
+​
+ ((1+μ) 
+∣y∣
+ −1),với y∈[−1,1]
+B. Cài đặt Causal Dilated Convolution
+Với một tầng tích chập 1D kernel size 
+k
+k và dilation 
+d
+d, receptive field mở rộng là 
+(
+k
+−
+1
+)
+⋅
+d
+(k−1)⋅d.
+Để đảm bảo tính chất nhân quả (mẫu tại 
+t
+t chỉ phụ thuộc vào các mẫu 
+≤
+t
+≤t), áp dụng Left-Padding đúng 
+(
+k
+−
+1
+)
+⋅
+d
+(k−1)⋅d phần tử 
+0
+0 vào đầu chuỗi:
+padding = (kernel_size - 1) * dilation
+x_padded = F.pad(x, (padding, 0))  # Chỉ đệm bên trái trên trục thời gian
+C. Residual Block với Gated Activation Unit
+Mỗi khối Residual nhận đầu vào 
+x
+x, qua phép biến đổi cổng:
+
+z
+=
+tanh
+⁡
+(
+W
+f
+∗
+x
+)
+⊙
+σ
+(
+W
+g
+∗
+x
+)
+z=tanh(W 
+f
+​
+ ∗x)⊙σ(W 
+g
+​
+ ∗x)
+W
+f
+W 
+f
+​
+  (filter): Trích xuất đặc trưng biên độ.
+W
+g
+W 
+g
+​
+  (gate): Kiểm soát lượng thông tin được truyền qua bước thời gian.
+Đầu ra của khối chia làm hai nhánh qua tích chập 
+1
+×
+1
+1×1:
+Residual output: 
+(
+W
+r
+e
+s
+∗
+z
+)
++
+x
+(W 
+res
+​
+ ∗z)+x đưa sang block tiếp theo.
+Skip output: 
+(
+W
+s
+k
+i
+p
+∗
+z
+)
+(W 
+skip
+​
+ ∗z) đưa trực tiếp ra tầng gom tổng cộng skip connections.
+3. Nhiệm Vụ Sinh Viên Cần Thực Hiện
+Nhiệm vụ 1: Cài đặt Module Lượng hóa và Kiểm tra Tính Bất Biến
+Viết 2 hàm: encode_mu_law(x, mu=255) và decode_mu_law(y, mu=255).
+Kiểm tra (Sanity Check): Chọn 1 file âm thanh mẫu từ SC09, nén xuống 256 mức, giải nén ngược lại và nghe thử. Tính toán chỉ số SNR (Signal-to-Noise Ratio) giữa tín hiệu gốc và tín hiệu tái tạo để xác nhận lượng suy giảm chất lượng là chấp nhận được.
+Nhiệm vụ 2: Lập trình Mô hình WaveNet Thuần PyTorch
+Cấu hình thực nghiệm khuyến nghị:
+Số kênh: residual_channels = 64, skip_channels = 128, quantization_levels = 256.
+Kernel size: 
+k
+=
+2
+k=2.
+Một chuỗi stack gồm 10 tầng với dilation tăng dần:
+d
+∈
+[
+1
+,
+2
+,
+4
+,
+8
+,
+16
+,
+32
+,
+64
+,
+128
+,
+256
+,
+512
+]
+d∈[1,2,4,8,16,32,64,128,256,512]
+Yêu cầu phân tích:
+Hãy tính toán chính xác Receptive Field (trường cảm thụ) của toàn bộ mạng theo đơn vị mẫu (samples) và theo đơn vị thời gian (mili-giây) ở tần số lấy mẫu 8 kHz.
+Trường cảm thụ này có đủ dài để bao phủ toàn bộ một phụ âm hoặc một âm vị trong từ vựng không?
+Nhiệm vụ 3: Huấn luyện Song Song theo Cơ Chế Teacher Forcing
+Chuỗi đầu vào 
+X
+=
+[
+x
+1
+,
+x
+2
+,
+…
+,
+x
+T
+−
+1
+]
+X=[x 
+1
+​
+ ,x 
+2
+​
+ ,…,x 
+T−1
+​
+ ], nhãn mục tiêu tương ứng là 
+Y
+=
+[
+x
+2
+,
+x
+3
+,
+…
+,
+x
+T
+]
+Y=[x 
+2
+​
+ ,x 
+3
+​
+ ,…,x 
+T
+​
+ ].
+Nhờ kiến trúc Causal Convolution, toàn bộ 
+T
+T bước thời gian được tính toán đồng thời song song trong một forward pass duy nhất (không cần vòng lặp for khi huấn luyện).
+Sử dụng nn.CrossEntropyLoss tính trung bình trên toàn bộ chiều thời gian 
+T
+T.
+Nhiệm vụ 4: Lấy Mẫu Tự Hồi Quy (Autoregressive Generation)
+Viết hàm generate_audio(model, num_samples, prompt=None):
+
+Khởi tạo một chuỗi đệm (buffer) chứa giá trị khởi đầu (hoặc silence zeros).
+Với mỗi bước 
+t
+t từ 
+1
+→
+num_samples
+1→num_samples:
+Đưa chuỗi lịch sử vào mạng.
+Lấy logits tại bước cuối cùng, chia cho hệ số nhiệt độ 
+τ
+=
+0.8
+τ=0.8 (Temperature Scaling).
+Lấy mẫu mức lượng hóa tiếp theo qua phân phối Categorical (torch.multinomial).
+Ghép mẫu vừa sinh vào chuỗi lịch sử để dự đoán mẫu kế tiếp.
+Giải nén chuỗi mức lượng hóa bằng decode_mu_law và lưu thành file .wav.
+Sinh ra một đoạn âm thanh dài 
+0.5
+0.5 giây (
+4,000
+4,000 mẫu) và ghi chú lại thời gian sinh thực tế (Wall-clock time).
+
+4. Tiêu Chí Đánh Giá & Báo Cáo
+Cài đặt CausalConv1d & Masking	25%	Đảm bảo tính nhân quả chính xác tuyệt đối (không rò rỉ thông tin tương lai, gradient của 
+x
+t
++
+1
+x 
+t+1
+​
+  không được truyền về 
+x
+t
+x 
+t
+​
+ ).
+Kiến trúc Dilation & Residual	25%	Kết nối Residual và gom tổng Skip connections hoạt động đúng shape; tính đúng trường cảm thụ lý thuyết.
+Pipeline 
+μ
+μ-law & Huấn luyện	25%	Huấn luyện hội tụ, loss giảm ổn định, log đồ thị qua TensorBoard/W&B.
+Generation & Báo cáo so sánh	25%	Xuất ra ít nhất 3 file audio nghe nhận diện được âm thanh giọng nói; phân tích được lý do tại sao inference chậm và đề xuất hướng tối ưu (ví dụ: Fast WaveNet / Caching queue).

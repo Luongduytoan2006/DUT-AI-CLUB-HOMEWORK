@@ -8,7 +8,8 @@ __pyache__/
 *.pdf
 *npy    
 *.pth
-*.pt
+*.pth
+data/
 image_retrieval_dataset/
 PredictHousing/
 DuyToanFolder copy/
@@ -33,3 +34,7 @@ day 55 27-8-2026/speech_commands_data
 .ask/
 tmp/
 *.wav
+
+# Large weight files (>100MB)
+day 47 11-7-2026/runs/best.pt
+day 47 11-7-2026/runs/last.pt
